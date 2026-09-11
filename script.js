@@ -14,11 +14,21 @@ let animaisCapturados = [];
 
 let animalAtual = null;
 const inimigos = [
-    { nome: "Pombo da Podridão", chance: 0.7, dano: 3, almas: 10, velocidade: 5, quantidade: 1, tempoLuta: 6.0, imgSrc: "assets/img/pombo.png", simboloAtaque: "🐾" },
-    { nome: "Capivara do Abismo", chance: 0.5, dano: 5, almas: 15, velocidade: 7, quantidade: 1, tempoLuta: 8.0, imgSrc: "assets/img/capivara.png", simboloAtaque: "🐾" },
-    { nome: "Lobo das Cinzas", chance: 0.3, dano: 10, almas: 30, velocidade: 9, quantidade: 2, tempoLuta: 10.0, imgSrc: "assets/img/lobo.png", simboloAtaque: "⚡" },
-    { nome: "Urso Pardo Corrompido", chance: 0.1, dano: 18, almas: 80, velocidade: 11, quantidade: 3, tempoLuta: 12.0, imgSrc: "assets/img/urso.png", simboloAtaque: "💥" }
+    { nome: "Pombo da Podridão", chance: 0.7, dano: 3, almas: 10, velocidade: 5, quantidade: 1, tempoLuta: 6.0, imgSrc: "assets/img/pombo.png", ataqueImgSrc: "assets/img/ataque_pombo.png", simboloAtaque: "🐾" },
+    { nome: "Capivara do Abismo", chance: 0.5, dano: 5, almas: 15, velocidade: 7, quantidade: 1, tempoLuta: 8.0, imgSrc: "assets/img/capivara.png", ataqueImgSrc: "assets/img/ataque_capivara.png", simboloAtaque: "🐾" },
+    { nome: "Lobo das Cinzas", chance: 0.3, dano: 10, almas: 30, velocidade: 9, quantidade: 2, tempoLuta: 10.0, imgSrc: "assets/img/lobo.png", ataqueImgSrc: "assets/img/ataque_lobo.png", simboloAtaque: "⚡" },
+    { nome: "Urso Pardo Corrompido", chance: 0.1, dano: 18, almas: 80, velocidade: 11, quantidade: 3, tempoLuta: 12.0, imgSrc: "assets/img/urso.png", ataqueImgSrc: "assets/img/ataque_urso.png", simboloAtaque: "💥" }
 ];
+
+// PREPARAÇÃO DAS IMAGENS
+const heroiImg = new Image();
+heroiImg.src = "assets/img/heroi.png"; 
+
+const fundoArenaImg = new Image();
+fundoArenaImg.src = "assets/img/fundo_arena.png"; 
+
+const fogueiraFundoImg = new Image();
+fogueiraFundoImg.src = "assets/img/fogueira_fundo.png"; // Imagem completa do fundo da fogueira
 
 let teclasPressionadas = {
     ArrowLeft: false,
@@ -145,6 +155,23 @@ function restaurarMenuPrincipal() {
 ========================================= */
 
 let fogueiraAnimId = null;
+let faiscas = [];
+
+function criarFaisca(canvasWidth, canvasHeight) {
+    // Ajuste fino: X em 0.15 para o alinhamento perfeito
+    const origX = canvasWidth * 0.15; 
+    const origY = canvasHeight * 0.72;
+
+    return {
+        x: origX + (Math.random() * 12 - 6),
+        y: origY,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: -Math.random() * 2.0 - 0.8,
+        tamanho: Math.random() * 2 + 1,
+        vida: 1.0,
+        cor: Math.random() > 0.3 ? "#ff4500" : "#ffcc00"
+    };
+}
 
 function fogueira() {
     vida = vidaMax;
@@ -215,87 +242,42 @@ function uparAtributo(tipo) {
 
 function iniciarDesenhoFogueira() {
     const canvas = document.getElementById("canvasFogueira");
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    let tempo = 0;
 
-    let particulas = [];
-    for(let i = 0; i < 25; i++) {
-        particulas.push({
-            x: 175 + (Math.random() * 30 - 15),
-            y: 200 + Math.random() * 20,
-            vx: Math.random() * 1.5 - 0.75,
-            vy: - (Math.random() * 2 + 1),
-            tamanho: Math.random() * 4 + 2,
-            vida: Math.random() * 30
-        });
-    }
+    faiscas = [];
 
     function render() {
-        tempo += 0.05;
+        ctx.imageSmoothingEnabled = false;
 
-        ctx.fillStyle = "#090d16";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#ffffff";
-        for (let i = 0; i < 20; i++) {
-            let x = (i * 37) % canvas.width;
-            let y = (i * 23) % 100;
-            ctx.fillRect(x, y, 1.5, 1.5);
+        // Desenha a Imagem Completa do Cenário
+        if (fogueiraFundoImg.complete && fogueiraFundoImg.naturalWidth !== 0) {
+            ctx.drawImage(fogueiraFundoImg, 0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillStyle = "#090d16";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        ctx.fillStyle = "#fffbe0";
-        ctx.beginPath();
-        ctx.arc(280, 50, 25, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#03060a";
-        for (let i = 0; i < 8; i++) {
-            let x = i * 50;
-            ctx.beginPath();
-            ctx.moveTo(x, 170);
-            ctx.lineTo(x + 25, 100);
-            ctx.lineTo(x + 50, 170);
-            ctx.fill();
+        // Gerencia as Faíscas
+        if (faiscas.length < 30) {
+            faiscas.push(criarFaisca(canvas.width, canvas.height));
         }
 
-        ctx.fillStyle = "#0c1829";
-        ctx.fillRect(0, 220, canvas.width, 80);
-
-        ctx.fillStyle = "rgba(255, 251, 224, 0.15)";
-        ctx.fillRect(260, 230 + Math.sin(tempo) * 2, 40, 40);
-
-        ctx.strokeStyle = "#4a2e12";
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(155, 220); ctx.lineTo(195, 205);
-        ctx.moveTo(195, 220); ctx.lineTo(155, 205);
-        ctx.stroke();
-
-        ctx.fillStyle = "#ff4500";
-        ctx.beginPath();
-        ctx.arc(175, 205, 18 + Math.sin(tempo * 3) * 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#ffaa00";
-        ctx.beginPath();
-        ctx.arc(175, 205, 10 + Math.cos(tempo * 4) * 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        for (let p of particulas) {
+        for (let i = faiscas.length - 1; i >= 0; i--) {
+            let p = faiscas[i];
             p.x += p.vx;
             p.y += p.vy;
-            p.vida -= 1;
+            p.vida -= 0.02;
 
-            if (p.vida <= 0 || p.y < 120) {
-                p.x = 175 + (Math.random() * 30 - 15);
-                p.y = 205;
-                p.vy = - (Math.random() * 2 + 1);
-                p.vida = 30;
-            }
-
-            ctx.fillStyle = "rgba(255, 200, 50, " + (p.vida / 30) + ")";
+            ctx.fillStyle = p.cor;
+            ctx.globalAlpha = Math.max(0, p.vida);
             ctx.fillRect(p.x, p.y, p.tamanho, p.tamanho);
+
+            if (p.vida <= 0 || p.y < canvas.height * 0.3) {
+                faiscas.splice(i, 1);
+            }
         }
+        ctx.globalAlpha = 1.0;
 
         fogueiraAnimId = requestAnimationFrame(render);
     }
@@ -337,7 +319,6 @@ function iniciarArena() {
     document.getElementById("narrativa-texto").innerText = `Resista ao poder de ${animalAtual.nome}!`;
 
     canvas = document.getElementById("canvasArena");
-    // ARENA AUMENTADA: Dimensões atualizadas para 500x480
     canvas.width = 500;
     canvas.height = 480;
     
@@ -376,21 +357,40 @@ function iniciarArena() {
     intervaloArena = setInterval(loopArena, 30);
 }
 
+const ataquesImagens = {};
+
+function carregarImagemAtaque(src) {
+    if (!ataquesImagens[src]) {
+        const img = new Image();
+        img.src = src;
+        ataquesImagens[src] = img;
+    }
+    return ataquesImagens[src];
+}
+
 function loopArena() {
-    // MOVIMENTAÇÃO AJUSTADA PARA OS NOVOS LIMITES DA ARENA
     if (teclasPressionadas.ArrowLeft && coracaoX > 25) coracaoX -= 7;
     if (teclasPressionadas.ArrowRight && coracaoX < 475) coracaoX += 7;
     if (teclasPressionadas.ArrowUp && coracaoY > 25) coracaoY -= 7;
     if (teclasPressionadas.ArrowDown && coracaoY < 455) coracaoY += 7;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (fundoArenaImg.complete && fundoArenaImg.naturalWidth !== 0) {
+        ctx.drawImage(fundoArenaImg, 0, 0, canvas.width, canvas.height);
+    } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
     
-    ctx.font = "24px Arial";
-    ctx.fillStyle = "red";
-    ctx.fillText("❤️", coracaoX - 12, coracaoY + 8);
+    const tamanhoPers = 32;
+    if (heroiImg.complete && heroiImg.naturalWidth !== 0) {
+        ctx.drawImage(heroiImg, coracaoX - tamanhoPers / 2, coracaoY - tamanhoPers / 2, tamanhoPers, tamanhoPers);
+    } else {
+        ctx.font = "24px Arial";
+        ctx.fillStyle = "red";
+        ctx.fillText("❤️", coracaoX - 12, coracaoY + 8);
+    }
 
-    ctx.font = "22px Arial";
-    ctx.fillStyle = "white";
+    const imgAtaque = carregarImagemAtaque(animalAtual.ataqueImgSrc);
+    const tamanhoAtaque = 24;
 
     for (let obs of obstaculos) {
         obs.y += obs.velocidade;
@@ -400,7 +400,13 @@ function loopArena() {
             obs.x = Math.random() * 440 + 30;
         }
 
-        ctx.fillText(animalAtual.simboloAtaque, obs.x - 12, obs.y + 8);
+        if (imgAtaque.complete && imgAtaque.naturalWidth !== 0) {
+            ctx.drawImage(imgAtaque, obs.x - tamanhoAtaque / 2, obs.y - tamanhoAtaque / 2, tamanhoAtaque, tamanhoAtaque);
+        } else {
+            ctx.font = "22px Arial";
+            ctx.fillStyle = "white";
+            ctx.fillText(animalAtual.simboloAtaque, obs.x - 12, obs.y + 8);
+        }
 
         if (Math.abs(coracaoX - obs.x) < 22 && Math.abs(coracaoY - obs.y) < 22) {
             clearInterval(intervaloArena);
@@ -448,7 +454,7 @@ function verificarMorte() {
 
 function mostrarInventario() {
     if (animaisCapturados.length === 0) {
-        mostrarModal("O canil imperial ainda está vazio, meu Soberano.");
+        mostrarModal("O canil imperial ainda me parece vazio, meu Soberano.");
         return;
     }
 

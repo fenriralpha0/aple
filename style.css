@@ -42,7 +42,6 @@ html, body {
     transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Expandido para acomodar a arena maior de 500px */
 #container.em-combate, 
 #container.em-fogueira {
     width: 1250px;
@@ -241,6 +240,7 @@ canvas#canvasArena {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: auto 0;
 }
 
 #canvasFogueira {
@@ -271,7 +271,7 @@ canvas#canvasArena {
 }
 
 /* =========================================
-   MODAL COMPACTO (Para avisos simples de texto)
+   MODAL COMPACTO
 ========================================= */
 
 #modal-overlay {
