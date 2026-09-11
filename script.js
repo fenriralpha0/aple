@@ -14,18 +14,19 @@ let animaisCapturados = [];
 
 let animalAtual = null;
 const inimigos = [
-    { nome: "Pombo da Podridão", chance: 0.7, dano: 3, almas: 10, velocidade: 5, quantidade: 1, tempoLuta: 6.0, imgSrc: "assets/img/pombo.png", ataqueImgSrc: "assets/img/ataque_pombo.png", simboloAtaque: "🐾" },
-    { nome: "Capivara do Abismo", chance: 0.5, dano: 5, almas: 15, velocidade: 7, quantidade: 1, tempoLuta: 8.0, imgSrc: "assets/img/capivara.png", ataqueImgSrc: "assets/img/ataque_capivara.png", simboloAtaque: "🐾" },
-    { nome: "Lobo das Cinzas", chance: 0.3, dano: 10, almas: 30, velocidade: 9, quantidade: 2, tempoLuta: 10.0, imgSrc: "assets/img/lobo.png", ataqueImgSrc: "assets/img/ataque_lobo.png", simboloAtaque: "⚡" },
-    { nome: "Urso Pardo Corrompido", chance: 0.1, dano: 18, almas: 80, velocidade: 11, quantidade: 3, tempoLuta: 12.0, imgSrc: "assets/img/urso.png", ataqueImgSrc: "assets/img/ataque_urso.png", simboloAtaque: "💥" }
+    { nome: "Pombo da Podridão", chance: 0.7, dano: 3, almas: 10, velocidade: 5, quantidade: 1, tempoLuta: 6.0, imgSrc: "assets/img/animais/pombo.png", ataqueImgSrc: "assets/img/ataques/ataque_pombo.png", simboloAtaque: "🐾" },
+    { nome: "Capivara do Abismo", chance: 0.5, dano: 5, almas: 15, velocidade: 7, quantidade: 1, tempoLuta: 8.0, imgSrc: "assets/img/animais/capivara.png", ataqueImgSrc: "assets/img/ataques/ataque_capivara.png", simboloAtaque: "🐾" },
+    { nome: "Lobo das Cinzas", chance: 0.3, dano: 10, almas: 30, velocidade: 9, quantidade: 2, tempoLuta: 10.0, imgSrc: "assets/img/animais/lobo.png", ataqueImgSrc: "assets/img/ataques/ataque_lobo.png", simboloAtaque: "⚡" },
+    { nome: "Urso Pardo Corrompido", chance: 0.1, dano: 18, almas: 80, velocidade: 11, quantidade: 3, tempoLuta: 15.0, imgSrc: "assets/img/animais/urso.png", ataqueImgSrc: "assets/img/ataques/ataque_urso.png", simboloAtaque: "💥" },
+    { nome: "Lagosta Infernal", chance: 0.2, dano: 11, almas: 35, velocidade: 9.5, quantidade: 2, tempoLuta: 12.0, imgSrc: "assets/img/animais/lagosta.png", ataqueImgSrc: "assets/img/ataques/ataque_lagosta.png", simboloAtaque: "🔥" }
 ];
 
 // PREPARAÇÃO DAS IMAGENS
 const heroiImg = new Image();
-heroiImg.src = "assets/img/heroi.png"; 
+heroiImg.src = "assets/img/heroi.png";
 
 const fundoArenaImg = new Image();
-fundoArenaImg.src = "assets/img/fundo_arena.png"; 
+fundoArenaImg.src = "assets/img/fundo_arena.png";
 
 const fogueiraFundoImg = new Image();
 fogueiraFundoImg.src = "assets/img/fogueira_fundo.png"; // Imagem completa do fundo da fogueira
@@ -46,7 +47,7 @@ function limparTeclas() {
 
 function mostrarModal(texto, callbackOk = null, textoOk = "OK", callbackCancelar = null, textoCancelar = "Cancelar") {
     document.getElementById("modal-box").classList.remove("modo-bestiario");
-    
+
     document.getElementById("modal-texto").innerText = texto;
     let botoesContainer = document.getElementById("modal-botoes-container");
     botoesContainer.innerHTML = "";
@@ -80,7 +81,7 @@ function fecharModal() {
 }
 
 function atualizarStatus() {
-    document.getElementById("status-panel").innerText = 
+    document.getElementById("status-panel").innerText =
         `Nv: ${nivel} | Almas: ${almas} | ❤️ HP: ${vida}/${vidaMax} | ⚔️ Dano: ${danoAtaque} | 💨 Agilidade: ${agilidade} | 🍎 Maçãs: ${macas}/${macasMax}`;
 }
 
@@ -91,7 +92,7 @@ function definirBotoes(html) {
 function explorar() {
     animalAtual = inimigos[Math.floor(Math.random() * inimigos.length)];
     document.getElementById("narrativa-texto").innerText = `⚠️ Um(a) ${animalAtual.nome} selvagem surgiu das sombras!`;
-    
+
     definirBotoes(`
         <button class="btn" onclick="jogarMaca()" style="background-color: #2d5a27;">🍎 Jogar Maçã Mágica</button><br>
         <button class="btn" onclick="fugir()" style="background-color: #5a2727;">🏃 Tentar Fugir</button>
@@ -102,7 +103,7 @@ function jogarMaca() {
     if (macas > 0) {
         macas--;
         atualizarStatus();
-        
+
         if (Math.random() <= animalAtual.chance) {
             animaisCapturados.push(animalAtual.nome);
             almas += animalAtual.almas;
@@ -130,7 +131,7 @@ function fugir() {
 function restaurarMenuPrincipal() {
     limparTeclas();
     pararAnimacaoFogueira();
-    
+
     document.getElementById("container").classList.remove("em-combate");
     document.getElementById("container").classList.remove("em-fogueira");
 
@@ -142,7 +143,7 @@ function restaurarMenuPrincipal() {
     document.getElementById("menu-acoes").style.display = "block";
     document.getElementById("narrativa-texto").innerText = "O reino aguarda suas ordens, meu Soberano.";
     atualizarStatus();
-    
+
     definirBotoes(`
         <button class="btn" onclick="explorar()">🌲 Explorar Ermos</button><br>
         <button class="btn" onclick="fogueira()">🔥 Descansar na Fogueira</button><br>
@@ -159,7 +160,7 @@ let faiscas = [];
 
 function criarFaisca(canvasWidth, canvasHeight) {
     // Ajuste fino: X em 0.15 para o alinhamento perfeito
-    const origX = canvasWidth * 0.15; 
+    const origX = canvasWidth * 0.15;
     const origY = canvasHeight * 0.72;
 
     return {
@@ -277,6 +278,7 @@ function iniciarDesenhoFogueira() {
                 faiscas.splice(i, 1);
             }
         }
+
         ctx.globalAlpha = 1.0;
 
         fogueiraAnimId = requestAnimationFrame(render);
@@ -298,6 +300,11 @@ function pararAnimacaoFogueira() {
 ========================================= */
 
 let canvas, ctx;
+
+// TAMANHO DO PERSONAGEM E HITBOX PROPORCIONAL
+const tamanhoPers = 48;
+const hitboxPers = tamanhoPers * 0.6;
+
 let coracaoX = 250, coracaoY = 380;
 let obstaculos = [];
 let tempoRestante = 5.0;
@@ -313,7 +320,7 @@ function iniciarArena() {
     document.getElementById("fogueira-arte-container").style.display = "none";
     document.getElementById("fogueira-box").style.display = "none";
     document.getElementById("arena-box").style.display = "flex";
-    
+
     document.getElementById("monstro-arena").src = animalAtual.imgSrc;
     document.getElementById("titulo-arena").innerText = `⚔️ ${animalAtual.nome.toUpperCase()} ⚔️`;
     document.getElementById("narrativa-texto").innerText = `Resista ao poder de ${animalAtual.nome}!`;
@@ -321,9 +328,9 @@ function iniciarArena() {
     canvas = document.getElementById("canvasArena");
     canvas.width = 500;
     canvas.height = 480;
-    
+
     ctx = canvas.getContext("2d");
-    
+
     coracaoX = 250;
     coracaoY = 380;
     tempoRestante = animalAtual.tempoLuta;
@@ -334,7 +341,7 @@ function iniciarArena() {
     for (let i = 0; i < animalAtual.quantidade; i++) {
         obstaculos.push({
             x: Math.random() * 440 + 30,
-            y: - (i * 120),
+            y: -(i * 120),
             velocidade: velCalculada
         });
     }
@@ -365,6 +372,7 @@ function carregarImagemAtaque(src) {
         img.src = src;
         ataquesImagens[src] = img;
     }
+
     return ataquesImagens[src];
 }
 
@@ -379,10 +387,16 @@ function loopArena() {
     } else {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    
-    const tamanhoPers = 32;
+
+    // DESENHA O PERSONAGEM
     if (heroiImg.complete && heroiImg.naturalWidth !== 0) {
-        ctx.drawImage(heroiImg, coracaoX - tamanhoPers / 2, coracaoY - tamanhoPers / 2, tamanhoPers, tamanhoPers);
+        ctx.drawImage(
+            heroiImg,
+            coracaoX - tamanhoPers / 2,
+            coracaoY - tamanhoPers / 2,
+            tamanhoPers,
+            tamanhoPers
+        );
     } else {
         ctx.font = "24px Arial";
         ctx.fillStyle = "red";
@@ -390,59 +404,83 @@ function loopArena() {
     }
 
     const imgAtaque = carregarImagemAtaque(animalAtual.ataqueImgSrc);
-    const tamanhoAtaque = 24;
+    const tamanhoAtaque = 34;
 
     for (let obs of obstaculos) {
         obs.y += obs.velocidade;
-        
+
         if (obs.y > 480) {
             obs.y = -30;
             obs.x = Math.random() * 440 + 30;
         }
 
         if (imgAtaque.complete && imgAtaque.naturalWidth !== 0) {
-            ctx.drawImage(imgAtaque, obs.x - tamanhoAtaque / 2, obs.y - tamanhoAtaque / 2, tamanhoAtaque, tamanhoAtaque);
+            ctx.drawImage(
+                imgAtaque,
+                obs.x - tamanhoAtaque / 2,
+                obs.y - tamanhoAtaque / 2,
+                tamanhoAtaque,
+                tamanhoAtaque
+            );
         } else {
             ctx.font = "22px Arial";
             ctx.fillStyle = "white";
             ctx.fillText(animalAtual.simboloAtaque, obs.x - 12, obs.y + 8);
         }
 
-        if (Math.abs(coracaoX - obs.x) < 22 && Math.abs(coracaoY - obs.y) < 22) {
+        // HITBOX PROPORCIONAL AO PERSONAGEM
+        if (
+            Math.abs(coracaoX - obs.x) < hitboxPers &&
+            Math.abs(coracaoY - obs.y) < hitboxPers
+        ) {
             clearInterval(intervaloArena);
             limparTeclas();
             window.onkeydown = null;
             window.onkeyup = null;
+
             vida -= animalAtual.dano;
-            mostrarModal(`💥 Vossa Majestade foi atingida por ${animalAtual.nome}! Perdeu ${animalAtual.dano} de HP.`, () => {
-                verificarMorte();
-            });
+
+            mostrarModal(
+                `💥 Vossa Majestade foi atingida por ${animalAtual.nome}! Perdeu ${animalAtual.dano} de HP.`,
+                () => {
+                    verificarMorte();
+                }
+            );
+
             return;
         }
     }
 
     tempoRestante -= 0.03;
-    document.getElementById("tempo-restante").innerText = `Tempo de Sobrevivência: ${tempoRestante.toFixed(1)}s`;
+    document.getElementById("tempo-restante").innerText =
+        `Tempo de Sobrevivência: ${tempoRestante.toFixed(1)}s`;
 
     if (tempoRestante <= 0) {
         clearInterval(intervaloArena);
         limparTeclas();
         window.onkeydown = null;
         window.onkeyup = null;
-        mostrarModal(`✨ Vossa Majestade superou a fúria de ${animalAtual.nome}!`, () => {
-            restaurarMenuPrincipal();
-        });
+
+        mostrarModal(
+            `✨ Vossa Majestade superou a fúria de ${animalAtual.nome}!`,
+            () => {
+                restaurarMenuPrincipal();
+            }
+        );
     }
 }
 
 function verificarMorte() {
     if (vida <= 0) {
-        mostrarModal("💀 YOU DIED 💀\nA escuridão consumiu o reino. Todas as almas foram perdidas.", () => {
-            almas = 0;
-            vida = vidaMax;
-            macas = macasMax;
-            restaurarMenuPrincipal();
-        });
+        mostrarModal(
+            "💀 YOU DIED 💀\nA escuridão consumiu o reino. Todas as almas foram perdidas.",
+            () => {
+                almas = 0;
+                vida = vidaMax;
+                macas = macasMax;
+                restaurarMenuPrincipal();
+            }
+        );
     } else {
         restaurarMenuPrincipal();
     }
@@ -470,6 +508,7 @@ function mostrarInventario() {
     });
 
     let listaHTML = `<ul style="list-style: none; padding: 0; margin: 0;">`;
+
     for (const [nome, qtd] of Object.entries(contagem)) {
         listaHTML += `
             <li style="padding: 8px; border: 1px solid rgba(255,51,51,0.3); margin-bottom: 6px; border-radius: 4px; display: flex; justify-content: space-between; font-size: 9px; cursor: pointer;" onclick="exibirDetalhesFera('${nome}')">
@@ -477,6 +516,7 @@ function mostrarInventario() {
                 <span style="color: #ffcc00;">x${qtd}</span>
             </li>`;
     }
+
     listaHTML += `</ul>`;
 
     modalTexto.innerHTML = `
@@ -489,7 +529,9 @@ function mostrarInventario() {
         </div>
     `;
 
-    botoesContainer.innerHTML = `<button class="modal-btn" onclick="fecharModal()">OK</button>`;
+    botoesContainer.innerHTML =
+        `<button class="modal-btn" onclick="fecharModal()">OK</button>`;
+
     document.getElementById("modal-overlay").style.display = "flex";
 }
 
