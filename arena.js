@@ -1,16 +1,17 @@
 /* =========================================
-   SISTEMA DE COMBATE E ARENA (arena.js)
+   SISTEMA DE COMBATE E ARENA (Refatorado)
 ========================================= */
 
 let canvas, ctx;
-const tamanhoPers = 100;
-const hitboxPers = 42;
+const tamanhoPers = 80;
+const hitboxPers = 32;
 
 let coracaoX = 500, coracaoY = 310;
 let obstaculos = [];
 let tempoRestante = 5.0;
-let intervaloArena = null;
-let estaEncerrado = false; // Trava para impedir múltiplos disparos de colisão
+let animFrameId = null;
+let ultimoTempo = 0;
+let estaEncerrado = false;
 
 const ataquesImagens = {};
 
@@ -28,9 +29,8 @@ function iniciarArena() {
     estaEncerrado = false;
 
     document.getElementById("container").classList.add("em-combate");
-
     document.getElementById("menu-acoes").style.display = "none";
-    document.getElementById("monstro-info").style.display = "block";
+    document.getElementById("monstro-info").style.display = "none";
     document.getElementById("fogueira-arte-container").style.display = "none";
     document.getElementById("fogueira-box").style.display = "none";
     document.getElementById("arena-box").style.display = "flex";
@@ -43,15 +43,13 @@ function iniciarArena() {
     canvas = document.getElementById("canvasArena");
     canvas.width = 1000;
     canvas.height = 620;
-
     ctx = canvas.getContext("2d");
 
     coracaoX = canvas.width / 2;
     coracaoY = canvas.height / 2 + 80;
     tempoRestante = animalAtual.tempoLuta;
 
-    // Velocidade natural dos projéteis (sem ser afetada pela agilidade)
-    let velCalculada = animalAtual.velocidade;
+    const velCalculada = animalAtual.velocidade * 60;
 
     obstaculos = [];
     for (let i = 0; i < animalAtual.quantidade; i++) {
@@ -63,9 +61,10 @@ function iniciarArena() {
     }
 
     window.onkeydown = (e) => {
-        if (e.key === "Enter" && !intervaloArena && !estaEncerrado) {
+        if (e.key === "Enter" && !animFrameId && !estaEncerrado) {
             document.getElementById("arena-start").style.display = "none";
-            intervaloArena = setInterval(loopArena, 30);
+            ultimoTempo = performance.now();
+            animFrameId = requestAnimationFrame(loopArena);
             return;
         }
 
@@ -84,31 +83,33 @@ function iniciarArena() {
         if (key === "arrowdown" || key === "s") teclasPressionadas.ArrowDown = false;
     };
 
-    if (intervaloArena) clearInterval(intervaloArena);
-    intervaloArena = null;
+    if (animFrameId) cancelAnimationFrame(animFrameId);
+    animFrameId = null;
 }
 
 function encerrarArena() {
     estaEncerrado = true;
-    if (intervaloArena) {
-        clearInterval(intervaloArena);
-        intervaloArena = null;
+    if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
     }
     limparTeclas();
     window.onkeydown = null;
     window.onkeyup = null;
 }
 
-function loopArena() {
+function loopArena(timestamp) {
     if (estaEncerrado) return;
 
-    // Agilidade aumenta a velocidade do Herói (Base 7 + 0.6 por ponto)
-    const velPersonagem = 7 + (agilidade * 0.6);
+    const dt = Math.min((timestamp - ultimoTempo) / 1000, 0.1);
+    ultimoTempo = timestamp;
 
-    if (teclasPressionadas.ArrowLeft) coracaoX = Math.max(24, coracaoX - velPersonagem);
-    if (teclasPressionadas.ArrowRight) coracaoX = Math.min(976, coracaoX + velPersonagem);
-    if (teclasPressionadas.ArrowUp) coracaoY = Math.max(24, coracaoY - velPersonagem);
-    if (teclasPressionadas.ArrowDown) coracaoY = Math.min(596, coracaoY + velPersonagem);
+    const velPersonagem = (7 + (agilidade * 0.6)) * 60;
+
+    if (teclasPressionadas.ArrowLeft) coracaoX = Math.max(24, coracaoX - velPersonagem * dt);
+    if (teclasPressionadas.ArrowRight) coracaoX = Math.min(976, coracaoX + velPersonagem * dt);
+    if (teclasPressionadas.ArrowUp) coracaoY = Math.max(24, coracaoY - velPersonagem * dt);
+    if (teclasPressionadas.ArrowDown) coracaoY = Math.min(596, coracaoY + velPersonagem * dt);
 
     if (fundoArenaImg.complete && fundoArenaImg.naturalWidth !== 0) {
         ctx.drawImage(fundoArenaImg, 0, 0, canvas.width, canvas.height);
@@ -134,7 +135,7 @@ function loopArena() {
     const tamanhoAtaque = 55;
 
     for (let obs of obstaculos) {
-        obs.y += obs.velocidade;
+        obs.y += obs.velocidade * dt;
 
         if (obs.y > 620) {
             obs.y = -30;
@@ -157,14 +158,11 @@ function loopArena() {
 
         const dx = coracaoX - obs.x;
         const dy = coracaoY - obs.y;
-        const distancia = Math.sqrt(dx * dx + dy * dy);
+        const distancia = Math.hypot(dx, dy);
 
-        // PROCESSAMENTO DE HIT / DANO
         if (distancia < hitboxPers) {
             encerrarArena();
-
-            vida -= animalAtual.dano;
-            if (vida < 0) vida = 0;
+            vida = Math.max(0, vida - animalAtual.dano);
             atualizarStatus();
 
             if (vida <= 0) {
@@ -172,23 +170,19 @@ function loopArena() {
             } else {
                 mostrarModal(
                     `💥 Vossa Majestade foi atingida por ${animalAtual.nome}! Perdeu ${animalAtual.dano} de HP.`,
-                    () => {
-                        restaurarMenuPrincipal();
-                    }
+                    () => restaurarMenuPrincipal()
                 );
             }
             return;
         }
     }
 
-    tempoRestante -= 0.03;
+    tempoRestante -= dt;
     document.getElementById("tempo-restante").innerText =
-        `Tempo de Sobrevivência: ${tempoRestante.toFixed(1)}s`;
+        `Tempo de Sobrevivência: ${Math.max(0, tempoRestante).toFixed(1)}s`;
 
-    // VITÓRIA
     if (tempoRestante <= 0) {
         encerrarArena();
-
         const almasGanhas = Math.floor(animalAtual.almas / 3);
         almas += almasGanhas;
         atualizarStatus();
@@ -196,9 +190,10 @@ function loopArena() {
         mostrarModal(
             `✨ Vossa Majestade superou a fúria de ${animalAtual.nome}!\n` +
             `🔮 Como recompensa de batalha, você absorveu ${almasGanhas} Almas!`,
-            () => {
-                restaurarMenuPrincipal();
-            }
+            () => restaurarMenuPrincipal()
         );
+        return;
     }
+
+    animFrameId = requestAnimationFrame(loopArena);
 }
