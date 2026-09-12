@@ -8,12 +8,13 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     height: 100vh;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: radial-gradient(circle, #1a0808 0%, #080404 70%, #000000 100%);
+    background: radial-gradient(circle, #0e141a 0%, #070a0e 70%, #000000 100%);
     color: #e0e0e0;
     font-family: 'Press Start 2P', monospace, sans-serif;
     display: flex;
@@ -28,15 +29,15 @@ html, body {
 #container {
     display: flex;
     flex-direction: row;
-    width: 680px; 
+    width: 680px;
     max-width: 95vw;
     height: 88vh;
     max-height: 850px;
-    background: rgba(18, 18, 20, 0.95);
-    border: 3px solid #ff3333;
+    background: rgba(15, 20, 26, 0.95);
+    border: 3px solid #7a8b99;
     border-radius: 12px;
     padding: 25px;
-    box-shadow: 0 0 30px rgba(255, 51, 51, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 30px rgba(122, 139, 153, 0.25), inset 0 0 20px rgba(0, 0, 0, 0.9);
     position: relative;
     gap: 25px;
     transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -69,7 +70,7 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-left: 2px dashed rgba(255, 51, 51, 0.3);
+    border-left: 2px dashed rgba(122, 139, 153, 0.3);
     padding-left: 10px;
     min-width: 0;
     box-sizing: border-box;
@@ -85,20 +86,20 @@ html, body {
 ========================================= */
 
 h1 {
-    color: #ff3333;
+    color: #8fa3b3;
     font-size: 15px;
     margin: 0 0 10px 0;
-    text-shadow: 2px 2px 0px #000, 0 0 12px rgba(255, 51, 51, 0.6);
+    text-shadow: 2px 2px 0px #000, 0 0 12px rgba(143, 163, 179, 0.5);
     line-height: 1.5;
     text-align: center;
 }
 
 .status-box {
-    background: #0d0d0d;
-    border: 2px solid #ff3333;
+    background: #090c10;
+    border: 2px solid #7a8b99;
     padding: 12px 10px;
     font-size: 9px;
-    color: #ffcc00;
+    color: #ffffff;
     width: 100%;
     border-radius: 8px;
     line-height: 1.8;
@@ -120,7 +121,7 @@ h1 {
     background: rgba(0, 0, 0, 0.6);
     padding: 12px;
     border-radius: 6px;
-    border-left: 4px solid #ff3333;
+    border-left: 4px solid #7a8b99;
     width: 100%;
 }
 
@@ -142,23 +143,31 @@ h1 {
 #painel-esquerdo img,
 .monstro-img,
 #monstro-arena {
-    max-width: 180px !important;
-    max-height: 180px !important;
+    max-width: 260px !important;
+    max-height: 260px !important;
     width: auto !important;
     height: auto !important;
     object-fit: contain !important;
     display: block !important;
-    margin: 12px auto !important;
-    border-radius: 8px;
-    background: radial-gradient(circle, rgba(60, 10, 10, 0.6) 0%, rgba(0, 0, 0, 0.8) 80%);
-    padding: 8px;
-    border: 1px solid rgba(255, 51, 51, 0.4);
-    filter: drop-shadow(0 0 16px rgba(255, 51, 51, 0.8));
+    margin: 8px auto !important;
+    
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+
+    /* Apenas iluminação difusa (glow) no formato do PNG */
+    -webkit-filter: 
+        drop-shadow(0 0 12px rgba(143, 163, 179, 0.9))
+        drop-shadow(0 0 28px rgba(122, 139, 153, 0.5));
+    filter: 
+        drop-shadow(0 0 12px rgba(143, 163, 179, 0.9))
+        drop-shadow(0 0 28px rgba(122, 139, 153, 0.5));
+
     image-rendering: pixelated;
 }
 
 #titulo-arena {
-    color: #ff3333;
+    color: #8fa3b3;
     margin-top: 10px;
     font-size: 11px;
     text-shadow: 1px 1px 0 #000;
@@ -174,9 +183,9 @@ h1 {
 }
 
 .btn {
-    background: linear-gradient(180deg, #2b2b2b 0%, #121212 100%);
+    background: linear-gradient(180deg, #232a30 0%, #101418 100%);
     color: #ffffff;
-    border: 2px solid #666;
+    border: 2px solid #5a6a78;
     padding: 14px;
     margin: 6px 0;
     font-family: 'Press Start 2P', monospace;
@@ -190,11 +199,12 @@ h1 {
 }
 
 .btn:hover {
-    background: linear-gradient(180deg, #ff3333 0%, #880000 100%);
-    border-color: #ff8888;
-    color: #fff;
+    background: linear-gradient(180deg, #8fa3b3 0%, #4f5d68 100%);
+    border-color: #fff;
+    color: #000;
+    text-shadow: none;
     transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(255, 51, 51, 0.5);
+    box-shadow: 0 6px 14px rgba(143, 163, 179, 0.4);
 }
 
 .btn:active {
@@ -205,19 +215,23 @@ h1 {
 /* =========================================
    ARENA DE DESVIO (PAINEL DIREITO)
 ========================================= */
+
 #arena-box {
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 #arena-container {
     position: relative;
     width: 100%;
     max-width: 1000px;
-    aspect-ratio: 1000 / 620;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #arena-start {
@@ -225,12 +239,10 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     text-align: center;
     pointer-events: none;
 }
@@ -238,14 +250,9 @@ h1 {
 #play-icon {
     font-family: Arial, sans-serif;
     font-size: 70px;
-    color: #ff3333;
-
-    text-shadow:
-        3px 3px 0 #000,
-        0 0 15px rgba(255, 51, 51, 0.8);
-
+    color: #8fa3b3;
+    text-shadow: 3px 3px 0 #000, 0 0 15px rgba(143, 163, 179, 0.8);
     margin-bottom: 25px;
-
     animation: playPulse 1.5s infinite ease-in-out;
 }
 
@@ -253,14 +260,12 @@ h1 {
     color: #ffffff;
     font-size: 11px;
     line-height: 1.8;
-
     background: rgba(0, 0, 0, 0.75);
-    border: 2px solid #ff3333;
+    border: 2px solid #7a8b99;
     padding: 12px 18px;
     border-radius: 6px;
-
     text-shadow: 2px 2px 0 #000;
-    box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
+    box-shadow: 0 0 15px rgba(122, 139, 153, 0.3);
 }
 
 @keyframes playPulse {
@@ -268,7 +273,6 @@ h1 {
         transform: scale(1);
         opacity: 0.8;
     }
-
     50% {
         transform: scale(1.1);
         opacity: 1;
@@ -277,20 +281,22 @@ h1 {
 
 canvas#canvasArena {
     background-color: #000;
-    border: 3px solid #ff3333;
+    border: 3px solid #7a8b99;
     border-radius: 8px;
     animation: arenaPulse 2s infinite ease-in-out;
-    max-width: 100%;
+    width: 100%;
     height: auto;
+    aspect-ratio: 1000 / 620;
     display: block;
+    box-sizing: border-box;
 }
 
 #tempo-restante {
     margin-top: 70px;
     font-size: 11px;
-    color: #ffcc00;
+    color: #8fa3b3;
     text-align: center;
-    text-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+    text-shadow: 0 0 8px rgba(143, 163, 179, 0.5);
 }
 
 /* =========================================
@@ -314,15 +320,15 @@ canvas#canvasArena {
 
 #canvasFogueira {
     background-color: #080b10;
-    border: 3px solid #ff7700;
+    border: 3px solid #7a8b99;
     border-radius: 8px;
-    box-shadow: 0 0 20px rgba(255, 119, 0, 0.4);
+    box-shadow: 0 0 20px rgba(122, 139, 153, 0.3);
     max-width: 100%;
 }
 
 .fogueira-info-box {
-    background: #111;
-    border: 2px solid #ff7700;
+    background: #0d1117;
+    border: 2px solid #7a8b99;
     border-radius: 8px;
     padding: 12px;
     width: 100%;
@@ -346,8 +352,10 @@ canvas#canvasArena {
 #modal-overlay {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.88);
     backdrop-filter: blur(4px);
     z-index: 999;
@@ -356,8 +364,8 @@ canvas#canvasArena {
 }
 
 #modal-box {
-    background: #121214;
-    border: 3px solid #ff3333;
+    background: #0f141a;
+    border: 3px solid #7a8b99;
     border-radius: 12px;
     padding: 25px;
     width: auto;
@@ -365,7 +373,7 @@ canvas#canvasArena {
     max-width: 480px;
     height: auto;
     max-height: 80vh;
-    box-shadow: 0 0 35px rgba(255, 51, 51, 0.5), inset 0 0 15px #000;
+    box-shadow: 0 0 35px rgba(122, 139, 153, 0.4), inset 0 0 15px #000;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -391,10 +399,11 @@ canvas#canvasArena {
     margin-top: 10px;
 }
 
-.modal-btn, #modal-box button {
-    background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+.modal-btn,
+#modal-box button {
+    background: linear-gradient(180deg, #232a30 0%, #101418 100%);
     color: #fff;
-    border: 2px solid #ff3333;
+    border: 2px solid #7a8b99;
     padding: 10px 20px;
     font-family: 'Press Start 2P', monospace;
     font-size: 10px;
@@ -404,11 +413,12 @@ canvas#canvasArena {
     box-shadow: 0 3px 0 #000;
 }
 
-.modal-btn:hover, #modal-box button:hover {
-    background: #ff3333;
-    color: #fff;
+.modal-btn:hover,
+#modal-box button:hover {
+    background: #8fa3b3;
+    color: #000000;
     transform: translateY(-2px);
-    box-shadow: 0 0 12px rgba(255, 51, 51, 0.8);
+    box-shadow: 0 0 12px rgba(143, 163, 179, 0.8);
 }
 
 /* =========================================
@@ -428,10 +438,10 @@ canvas#canvasArena {
 #bestiario-lista {
     width: 32%;
     min-width: 220px;
-    border-right: 2px dashed rgba(255, 51, 51, 0.4);
+    border-right: 2px dashed rgba(122, 139, 153, 0.4);
     padding: 20px;
     overflow-y: auto;
-    background: rgba(10, 10, 12, 0.9);
+    background: rgba(10, 14, 18, 0.9);
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -445,7 +455,7 @@ canvas#canvasArena {
     align-items: center;
     justify-content: center;
     overflow-y: auto;
-    background: rgba(18, 18, 20, 0.95);
+    background: rgba(15, 20, 26, 0.95);
     position: relative;
 }
 
@@ -461,7 +471,13 @@ canvas#canvasArena {
 ========================================= */
 
 @keyframes arenaPulse {
-    0% { box-shadow: 0 0 15px rgba(255, 51, 51, 0.4); }
-    50% { box-shadow: 0 0 30px rgba(255, 51, 51, 0.8); }
-    100% { box-shadow: 0 0 15px rgba(255, 51, 51, 0.4); }
+    0% {
+        box-shadow: 0 0 15px rgba(122, 139, 153, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(122, 139, 153, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(122, 139, 153, 0.3);
+    }
 }

@@ -93,6 +93,11 @@ function explorar() {
     animalAtual = inimigos[Math.floor(Math.random() * inimigos.length)];
     document.getElementById("narrativa-texto").innerText = `⚠️ Um(a) ${animalAtual.nome} selvagem surgiu das sombras!`;
 
+    // Exibe o painel com a imagem e o nome do monstro encontrado
+    document.getElementById("monstro-info").style.display = "block";
+    document.getElementById("monstro-arena").src = animalAtual.imgSrc;
+    document.getElementById("titulo-arena").innerText = `⚔️ ${animalAtual.nome.toUpperCase()} ⚔️`;
+
     definirBotoes(`
         <button class="btn" onclick="jogarMaca()" style="background-color: #2d5a27;">🍎 Jogar Maçã Mágica</button><br>
         <button class="btn" onclick="fugir()" style="background-color: #5a2727;">🏃 Tentar Fugir</button>
@@ -144,6 +149,8 @@ function fugir() {
 
 function restaurarMenuPrincipal() {
     limparTeclas();
+    window.onkeydown = null; // Libera os eventos globais de tecla
+    window.onkeyup = null;
     pararAnimacaoFogueira();
 
     document.getElementById("container").classList.remove("em-combate");
@@ -341,13 +348,16 @@ function iniciarArena() {
     document.getElementById("narrativa-texto").innerText = `Resista ao poder de ${animalAtual.nome}!`;
 
     canvas = document.getElementById("canvasArena");
+
+    // Dimensões lógicas do Canvas (não alterar)
     canvas.width = 1000;
     canvas.height = 620;
 
     ctx = canvas.getContext("2d");
 
-    coracaoX = 250;
-    coracaoY = 380;
+    // Posição inicial no centro do Canvas
+    coracaoX = canvas.width / 2;
+    coracaoY = canvas.height / 2 + 80;
     tempoRestante = animalAtual.tempoLuta;
 
     let velCalculada = Math.max(2.0, animalAtual.velocidade - (agilidade * 0.5));
@@ -355,24 +365,17 @@ function iniciarArena() {
     obstaculos = [];
     for (let i = 0; i < animalAtual.quantidade; i++) {
         obstaculos.push({
-            x: Math.random() * 940 + 30,
+            x: Math.random() * (canvas.width - 60) + 30,
             y: -(i * 120),
             velocidade: velCalculada
         });
     }
 
+    // Gerenciador de teclas limpo
     window.onkeydown = (e) => {
         if (e.key === "Enter" && !intervaloArena) {
-
-            // Esconde a tela de início
             document.getElementById("arena-start").style.display = "none";
-
-            // Começa a batalha
             intervaloArena = setInterval(loopArena, 30);
-
-            document.getElementById("narrativa-texto").innerText =
-                `Resista ao poder de ${animalAtual.nome}!`;
-
             return;
         }
 
