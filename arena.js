@@ -163,33 +163,29 @@ function loopArena() {
     document.getElementById("tempo-restante").innerText =
         `Tempo de Sobrevivência: ${tempoRestante.toFixed(1)}s`;
 
+    // AQUI É O ONDE A RECOMPENSA É PROCESSADA QUANDO O TEMPO ACABA
     if (tempoRestante <= 0) {
         clearInterval(intervaloArena);
         limparTeclas();
         window.onkeydown = null;
         window.onkeyup = null;
 
-        mostrarModal(
-            `✨ Vossa Majestade superou a fúria de ${animalAtual.nome}!`,
-            () => {
-                restaurarMenuPrincipal();
-            }
-        );
-    }
-}
+        // 1. Calcula 1/3 das almas (arredondado para baixo)
+        const almasGanhas = Math.floor(animalAtual.almas / 3);
 
-function verificarMorte() {
-    if (vida <= 0) {
+        // 2. Adiciona as almas ao total do jogador
+        almas += almasGanhas;
+
+        // 3. Atualiza o status na tela antes de abrir a modal
+        atualizarStatus();
+
+        // 4. Exibe a modal informando a recompensa ganha
         mostrarModal(
-            "💀 YOU DIED 💀\nA escuridão consumiu o reino. Todas as almas foram perdidas.",
+            `✨ Vossa Majestade superou a fúria de ${animalAtual.nome}!\n` +
+            `🔮 Como recompensa de batalha, você absorveu ${almasGanhas} Almas!`,
             () => {
-                almas = 0;
-                vida = vidaMax;
-                macas = macasMax;
                 restaurarMenuPrincipal();
             }
         );
-    } else {
-        restaurarMenuPrincipal();
     }
 }
