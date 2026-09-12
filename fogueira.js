@@ -48,13 +48,13 @@ function atualizarPainelFogueira() {
         🔮 <b>Custo Próximo Nível:</b> ${almasNecessarias} Almas<br><hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
         ❤️ <b>Vitalidade:</b> ${vidaMax} HP (+5/nível)<br>
         ⚔️ <b>Dano Base:</b> ${danoAtaque} (+3/nível)<br>
-        💨 <b>Agilidade:</b> Nv. ${agilidade} (Desaceleração de projéteis)
+        💨 <b>Agilidade:</b> Nv. ${agilidade} (Aumenta velocidade de esquiva)
     `;
 
     botoesContainer.innerHTML = `
         <button class="btn" onclick="uparAtributo('vitalidade')" style="background-color: #8b0000;">❤️ Upar Vitalidade (+5 HP)</button>
         <button class="btn" onclick="uparAtributo('dano')" style="background-color: #a0522d;">⚔️ Upar Dano (+3 Dano)</button>
-        <button class="btn" onclick="uparAtributo('agilidade')" style="background-color: #2e8b57;">💨 Upar Agilidade (Projéteis Lentos)</button>
+        <button class="btn" onclick="uparAtributo('agilidade')" style="background-color: #2e8b57;">💨 Upar Agilidade (+Velocidade do Herói)</button>
         <button class="btn" onclick="restaurarMenuPrincipal()" style="background-color: #444; margin-top: 10px;">🚪 Levantar-se e Sair</button>
     `;
 }
@@ -75,7 +75,7 @@ function uparAtributo(tipo) {
             mensagem = "⚔️ Seu Dano de ataque aumentou! (+3 Dano)";
         } else if (tipo === 'agilidade') {
             agilidade += 1;
-            mensagem = "💨 Vossa Agilidade aumentou! Ataques inimigos ficarão mais lentos.";
+            mensagem = "💨 Vossa Agilidade aumentou! Vossa Majestade se moverá mais rápido na arena.";
         }
 
         atualizarStatus();

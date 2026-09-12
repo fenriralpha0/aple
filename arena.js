@@ -1,15 +1,16 @@
 /* =========================================
-   SISTEMA DE COMBATE E ARENA
+   SISTEMA DE COMBATE E ARENA (arena.js)
 ========================================= */
 
 let canvas, ctx;
-const tamanhoPers = 70;
-const hitboxPers = 30;
+const tamanhoPers = 100;
+const hitboxPers = 42;
 
 let coracaoX = 500, coracaoY = 310;
 let obstaculos = [];
 let tempoRestante = 5.0;
 let intervaloArena = null;
+let estaEncerrado = false; // Trava para impedir múltiplos disparos de colisão
 
 const ataquesImagens = {};
 
@@ -24,6 +25,7 @@ function carregarImagemAtaque(src) {
 
 function iniciarArena() {
     limparTeclas();
+    estaEncerrado = false;
 
     document.getElementById("container").classList.add("em-combate");
 
@@ -48,7 +50,8 @@ function iniciarArena() {
     coracaoY = canvas.height / 2 + 80;
     tempoRestante = animalAtual.tempoLuta;
 
-    let velCalculada = Math.max(2.0, animalAtual.velocidade - (agilidade * 0.5));
+    // Velocidade natural dos projéteis (sem ser afetada pela agilidade)
+    let velCalculada = animalAtual.velocidade;
 
     obstaculos = [];
     for (let i = 0; i < animalAtual.quantidade; i++) {
@@ -59,9 +62,8 @@ function iniciarArena() {
         });
     }
 
-    // Aceita tanto Setas direcionais quanto WASD
     window.onkeydown = (e) => {
-        if (e.key === "Enter" && !intervaloArena) {
+        if (e.key === "Enter" && !intervaloArena && !estaEncerrado) {
             document.getElementById("arena-start").style.display = "none";
             intervaloArena = setInterval(loopArena, 30);
             return;
@@ -86,11 +88,27 @@ function iniciarArena() {
     intervaloArena = null;
 }
 
+function encerrarArena() {
+    estaEncerrado = true;
+    if (intervaloArena) {
+        clearInterval(intervaloArena);
+        intervaloArena = null;
+    }
+    limparTeclas();
+    window.onkeydown = null;
+    window.onkeyup = null;
+}
+
 function loopArena() {
-    if (teclasPressionadas.ArrowLeft) coracaoX = Math.max(24, coracaoX - 7);
-    if (teclasPressionadas.ArrowRight) coracaoX = Math.min(976, coracaoX + 7);
-    if (teclasPressionadas.ArrowUp) coracaoY = Math.max(24, coracaoY - 7);
-    if (teclasPressionadas.ArrowDown) coracaoY = Math.min(596, coracaoY + 7);
+    if (estaEncerrado) return;
+
+    // Agilidade aumenta a velocidade do Herói (Base 7 + 0.6 por ponto)
+    const velPersonagem = 7 + (agilidade * 0.6);
+
+    if (teclasPressionadas.ArrowLeft) coracaoX = Math.max(24, coracaoX - velPersonagem);
+    if (teclasPressionadas.ArrowRight) coracaoX = Math.min(976, coracaoX + velPersonagem);
+    if (teclasPressionadas.ArrowUp) coracaoY = Math.max(24, coracaoY - velPersonagem);
+    if (teclasPressionadas.ArrowDown) coracaoY = Math.min(596, coracaoY + velPersonagem);
 
     if (fundoArenaImg.complete && fundoArenaImg.naturalWidth !== 0) {
         ctx.drawImage(fundoArenaImg, 0, 0, canvas.width, canvas.height);
@@ -107,13 +125,13 @@ function loopArena() {
             tamanhoPers
         );
     } else {
-        ctx.font = "24px Arial";
+        ctx.font = "36px Arial";
         ctx.fillStyle = "red";
-        ctx.fillText("❤️", coracaoX - 12, coracaoY + 8);
+        ctx.fillText("❤️", coracaoX - 18, coracaoY + 12);
     }
 
     const imgAtaque = carregarImagemAtaque(animalAtual.ataqueImgSrc);
-    const tamanhoAtaque = 34;
+    const tamanhoAtaque = 55;
 
     for (let obs of obstaculos) {
         obs.y += obs.velocidade;
@@ -132,29 +150,33 @@ function loopArena() {
                 tamanhoAtaque
             );
         } else {
-            ctx.font = "22px Arial";
+            ctx.font = "28px Arial";
             ctx.fillStyle = "white";
-            ctx.fillText(animalAtual.simboloAtaque, obs.x - 12, obs.y + 8);
+            ctx.fillText(animalAtual.simboloAtaque, obs.x - 14, obs.y + 10);
         }
 
         const dx = coracaoX - obs.x;
         const dy = coracaoY - obs.y;
         const distancia = Math.sqrt(dx * dx + dy * dy);
 
+        // PROCESSAMENTO DE HIT / DANO
         if (distancia < hitboxPers) {
-            clearInterval(intervaloArena);
-            limparTeclas();
-            window.onkeydown = null;
-            window.onkeyup = null;
+            encerrarArena();
 
             vida -= animalAtual.dano;
+            if (vida < 0) vida = 0;
+            atualizarStatus();
 
-            mostrarModal(
-                `💥 Vossa Majestade foi atingida por ${animalAtual.nome}! Perdeu ${animalAtual.dano} de HP.`,
-                () => {
-                    verificarMorte();
-                }
-            );
+            if (vida <= 0) {
+                verificarMorte();
+            } else {
+                mostrarModal(
+                    `💥 Vossa Majestade foi atingida por ${animalAtual.nome}! Perdeu ${animalAtual.dano} de HP.`,
+                    () => {
+                        restaurarMenuPrincipal();
+                    }
+                );
+            }
             return;
         }
     }
@@ -163,23 +185,14 @@ function loopArena() {
     document.getElementById("tempo-restante").innerText =
         `Tempo de Sobrevivência: ${tempoRestante.toFixed(1)}s`;
 
-    // AQUI É O ONDE A RECOMPENSA É PROCESSADA QUANDO O TEMPO ACABA
+    // VITÓRIA
     if (tempoRestante <= 0) {
-        clearInterval(intervaloArena);
-        limparTeclas();
-        window.onkeydown = null;
-        window.onkeyup = null;
+        encerrarArena();
 
-        // 1. Calcula 1/3 das almas (arredondado para baixo)
         const almasGanhas = Math.floor(animalAtual.almas / 3);
-
-        // 2. Adiciona as almas ao total do jogador
         almas += almasGanhas;
-
-        // 3. Atualiza o status na tela antes de abrir a modal
         atualizarStatus();
 
-        // 4. Exibe a modal informando a recompensa ganha
         mostrarModal(
             `✨ Vossa Majestade superou a fúria de ${animalAtual.nome}!\n` +
             `🔮 Como recompensa de batalha, você absorveu ${almasGanhas} Almas!`,
