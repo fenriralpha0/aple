@@ -14,11 +14,11 @@ let animaisCapturados = [];
 
 let animalAtual = null;
 const inimigos = [
-    { nome: "Pombo da Podridão", chance: 0.7, dano: 3, almas: 10, velocidade: 5, quantidade: 1, tempoLuta: 6.0, imgSrc: "assets/img/animais/pombo.png", ataqueImgSrc: "assets/img/ataques/ataque_pombo.png", simboloAtaque: "🐾" },
-    { nome: "Capivara do Abismo", chance: 0.5, dano: 5, almas: 15, velocidade: 7, quantidade: 1, tempoLuta: 8.0, imgSrc: "assets/img/animais/capivara.png", ataqueImgSrc: "assets/img/ataques/ataque_capivara.png", simboloAtaque: "🐾" },
-    { nome: "Lobo das Cinzas", chance: 0.3, dano: 10, almas: 30, velocidade: 9, quantidade: 2, tempoLuta: 10.0, imgSrc: "assets/img/animais/lobo.png", ataqueImgSrc: "assets/img/ataques/ataque_lobo.png", simboloAtaque: "⚡" },
-    { nome: "Urso Pardo Corrompido", chance: 0.1, dano: 18, almas: 80, velocidade: 11, quantidade: 3, tempoLuta: 15.0, imgSrc: "assets/img/animais/urso.png", ataqueImgSrc: "assets/img/ataques/ataque_urso.png", simboloAtaque: "💥" },
-    { nome: "Lagosta Infernal", chance: 0.2, dano: 11, almas: 35, velocidade: 9.5, quantidade: 2, tempoLuta: 12.0, imgSrc: "assets/img/animais/lagosta.png", ataqueImgSrc: "assets/img/ataques/ataque_lagosta.png", simboloAtaque: "🔥" }
+    { nome: "Pombo da Podridão", chance: 0.7, dano: 3, almas: 10, velocidade: 5, quantidade: 3, tempoLuta: 6.0, imgSrc: "assets/img/animais/pombo.png", ataqueImgSrc: "assets/img/ataques/ataque_pombo.png", simboloAtaque: "🐾" },
+    { nome: "Capivara do Abismo", chance: 0.5, dano: 5, almas: 15, velocidade: 7, quantidade: 3, tempoLuta: 8.0, imgSrc: "assets/img/animais/capivara.png", ataqueImgSrc: "assets/img/ataques/ataque_capivara.png", simboloAtaque: "🐾" },
+    { nome: "Lobo das Cinzas", chance: 0.3, dano: 10, almas: 30, velocidade: 9, quantidade: 5, tempoLuta: 10.0, imgSrc: "assets/img/animais/lobo.png", ataqueImgSrc: "assets/img/ataques/ataque_lobo.png", simboloAtaque: "⚡" },
+    { nome: "Urso Pardo Corrompido", chance: 0.1, dano: 18, almas: 80, velocidade: 11, quantidade: 7, tempoLuta: 15.0, imgSrc: "assets/img/animais/urso.png", ataqueImgSrc: "assets/img/ataques/ataque_urso.png", simboloAtaque: "💥" },
+    { nome: "Lagosta Infernal", chance: 0.2, dano: 11, almas: 35, velocidade: 9.5, quantidade: 5, tempoLuta: 12.0, imgSrc: "assets/img/animais/lagosta.png", ataqueImgSrc: "assets/img/ataques/ataque_lagosta.png", simboloAtaque: "🔥" }
 ];
 
 // PREPARAÇÃO DAS IMAGENS
@@ -123,9 +123,23 @@ function jogarMaca() {
 }
 
 function fugir() {
-    mostrarModal("Retirada tática executada com sucesso.", () => {
-        restaurarMenuPrincipal();
-    });
+    const chanceFuga = Math.random();
+
+    if (chanceFuga < 0.35) {
+        mostrarModal(
+            "🏃 Vossa Majestade usou a agilidade e conseguiu fugir das sombras!",
+            () => {
+                restaurarMenuPrincipal();
+            }
+        );
+    } else {
+        mostrarModal(
+            `❌ A fuga falhou! O(a) ${animalAtual.nome} cercou Vossa Majestade e atacou!`,
+            () => {
+                iniciarArena();
+            }
+        );
+    }
 }
 
 function restaurarMenuPrincipal() {
@@ -302,10 +316,10 @@ function pararAnimacaoFogueira() {
 let canvas, ctx;
 
 // TAMANHO DO PERSONAGEM E HITBOX PROPORCIONAL
-const tamanhoPers = 48;
-const hitboxPers = tamanhoPers * 0.6;
+const tamanhoPers = 70;
+const hitboxPers = 30;
 
-let coracaoX = 250, coracaoY = 380;
+let coracaoX = 500, coracaoY = 310;
 let obstaculos = [];
 let tempoRestante = 5.0;
 let intervaloArena = null;
@@ -320,14 +334,15 @@ function iniciarArena() {
     document.getElementById("fogueira-arte-container").style.display = "none";
     document.getElementById("fogueira-box").style.display = "none";
     document.getElementById("arena-box").style.display = "flex";
+    document.getElementById("arena-start").style.display = "flex";
 
     document.getElementById("monstro-arena").src = animalAtual.imgSrc;
     document.getElementById("titulo-arena").innerText = `⚔️ ${animalAtual.nome.toUpperCase()} ⚔️`;
     document.getElementById("narrativa-texto").innerText = `Resista ao poder de ${animalAtual.nome}!`;
 
     canvas = document.getElementById("canvasArena");
-    canvas.width = 500;
-    canvas.height = 480;
+    canvas.width = 1000;
+    canvas.height = 620;
 
     ctx = canvas.getContext("2d");
 
@@ -340,13 +355,27 @@ function iniciarArena() {
     obstaculos = [];
     for (let i = 0; i < animalAtual.quantidade; i++) {
         obstaculos.push({
-            x: Math.random() * 440 + 30,
+            x: Math.random() * 940 + 30,
             y: -(i * 120),
             velocidade: velCalculada
         });
     }
 
     window.onkeydown = (e) => {
+        if (e.key === "Enter" && !intervaloArena) {
+
+            // Esconde a tela de início
+            document.getElementById("arena-start").style.display = "none";
+
+            // Começa a batalha
+            intervaloArena = setInterval(loopArena, 30);
+
+            document.getElementById("narrativa-texto").innerText =
+                `Resista ao poder de ${animalAtual.nome}!`;
+
+            return;
+        }
+
         if (teclasPressionadas.hasOwnProperty(e.key)) {
             e.preventDefault();
             teclasPressionadas[e.key] = true;
@@ -361,7 +390,7 @@ function iniciarArena() {
     };
 
     if (intervaloArena) clearInterval(intervaloArena);
-    intervaloArena = setInterval(loopArena, 30);
+    intervaloArena = null;
 }
 
 const ataquesImagens = {};
@@ -377,10 +406,10 @@ function carregarImagemAtaque(src) {
 }
 
 function loopArena() {
-    if (teclasPressionadas.ArrowLeft && coracaoX > 25) coracaoX -= 7;
-    if (teclasPressionadas.ArrowRight && coracaoX < 475) coracaoX += 7;
-    if (teclasPressionadas.ArrowUp && coracaoY > 25) coracaoY -= 7;
-    if (teclasPressionadas.ArrowDown && coracaoY < 455) coracaoY += 7;
+    if (teclasPressionadas.ArrowLeft) coracaoX = Math.max(24, coracaoX - 7);
+    if (teclasPressionadas.ArrowRight) coracaoX = Math.min(976, coracaoX + 7);
+    if (teclasPressionadas.ArrowUp) coracaoY = Math.max(24, coracaoY - 7);
+    if (teclasPressionadas.ArrowDown) coracaoY = Math.min(596, coracaoY + 7);
 
     if (fundoArenaImg.complete && fundoArenaImg.naturalWidth !== 0) {
         ctx.drawImage(fundoArenaImg, 0, 0, canvas.width, canvas.height);
@@ -409,9 +438,9 @@ function loopArena() {
     for (let obs of obstaculos) {
         obs.y += obs.velocidade;
 
-        if (obs.y > 480) {
+        if (obs.y > 620) {
             obs.y = -30;
-            obs.x = Math.random() * 440 + 30;
+            obs.x = Math.random() * 940 + 30;
         }
 
         if (imgAtaque.complete && imgAtaque.naturalWidth !== 0) {
@@ -429,10 +458,11 @@ function loopArena() {
         }
 
         // HITBOX PROPORCIONAL AO PERSONAGEM
-        if (
-            Math.abs(coracaoX - obs.x) < hitboxPers &&
-            Math.abs(coracaoY - obs.y) < hitboxPers
-        ) {
+        const dx = coracaoX - obs.x;
+        const dy = coracaoY - obs.y;
+        const distancia = Math.sqrt(dx * dx + dy * dy);
+
+        if (distancia < hitboxPers) {
             clearInterval(intervaloArena);
             limparTeclas();
             window.onkeydown = null;

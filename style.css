@@ -42,13 +42,18 @@ html, body {
     transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-#container.em-combate, 
+#container.em-combate {
+    width: 1450px;
+    height: 90vh;
+    max-height: none;
+}
+
 #container.em-fogueira {
     width: 1250px;
 }
 
 #painel-esquerdo {
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -60,12 +65,14 @@ html, body {
 
 #painel-direito {
     display: none;
-    flex: 1;
+    flex: 3;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     border-left: 2px dashed rgba(255, 51, 51, 0.3);
-    padding-left: 25px;
+    padding-left: 10px;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 #container.em-combate #painel-direito,
@@ -198,13 +205,74 @@ h1 {
 /* =========================================
    ARENA DE DESVIO (PAINEL DIREITO)
 ========================================= */
-
 #arena-box {
     width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#arena-container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    aspect-ratio: 1000 / 620;
+}
+
+#arena-start {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    text-align: center;
+    pointer-events: none;
+}
+
+#play-icon {
+    font-family: Arial, sans-serif;
+    font-size: 70px;
+    color: #ff3333;
+
+    text-shadow:
+        3px 3px 0 #000,
+        0 0 15px rgba(255, 51, 51, 0.8);
+
+    margin-bottom: 25px;
+
+    animation: playPulse 1.5s infinite ease-in-out;
+}
+
+#start-text {
+    color: #ffffff;
+    font-size: 11px;
+    line-height: 1.8;
+
+    background: rgba(0, 0, 0, 0.75);
+    border: 2px solid #ff3333;
+    padding: 12px 18px;
+    border-radius: 6px;
+
+    text-shadow: 2px 2px 0 #000;
+    box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
+}
+
+@keyframes playPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
 }
 
 canvas#canvasArena {
@@ -214,10 +282,11 @@ canvas#canvasArena {
     animation: arenaPulse 2s infinite ease-in-out;
     max-width: 100%;
     height: auto;
+    display: block;
 }
 
 #tempo-restante {
-    margin-top: 15px;
+    margin-top: 70px;
     font-size: 11px;
     color: #ffcc00;
     text-align: center;
