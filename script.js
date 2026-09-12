@@ -1,4 +1,6 @@
-// ATRIBUTOS DO SOBERANO
+/* =========================================
+   ESTADO GLOBAL DO SOBERANO
+========================================= */
 let nivel = 1;
 let almas = 0;
 let almasNecessarias = 30;
@@ -13,15 +15,8 @@ let macas = macasMax;
 let animaisCapturados = [];
 
 let animalAtual = null;
-const inimigos = [
-    { nome: "Pombo da Podridão", chance: 0.7, dano: 3, almas: 10, velocidade: 5, quantidade: 3, tempoLuta: 6.0, imgSrc: "assets/img/animais/pombo.png", ataqueImgSrc: "assets/img/ataques/ataque_pombo.png", simboloAtaque: "🐾" },
-    { nome: "Capivara do Abismo", chance: 0.5, dano: 5, almas: 15, velocidade: 7, quantidade: 3, tempoLuta: 8.0, imgSrc: "assets/img/animais/capivara.png", ataqueImgSrc: "assets/img/ataques/ataque_capivara.png", simboloAtaque: "🐾" },
-    { nome: "Lobo das Cinzas", chance: 0.3, dano: 10, almas: 30, velocidade: 9, quantidade: 5, tempoLuta: 10.0, imgSrc: "assets/img/animais/lobo.png", ataqueImgSrc: "assets/img/ataques/ataque_lobo.png", simboloAtaque: "⚡" },
-    { nome: "Urso Pardo Corrompido", chance: 0.1, dano: 18, almas: 80, velocidade: 11, quantidade: 7, tempoLuta: 15.0, imgSrc: "assets/img/animais/urso.png", ataqueImgSrc: "assets/img/ataques/ataque_urso.png", simboloAtaque: "💥" },
-    { nome: "Lagosta Infernal", chance: 0.2, dano: 11, almas: 35, velocidade: 9.5, quantidade: 5, tempoLuta: 12.0, imgSrc: "assets/img/animais/lagosta.png", ataqueImgSrc: "assets/img/ataques/ataque_lagosta.png", simboloAtaque: "🔥" }
-];
 
-// PREPARAÇÃO DAS IMAGENS
+// CARREGAMENTO DAS IMAGENS PRINCIPAIS
 const heroiImg = new Image();
 heroiImg.src = "assets/img/heroi.png";
 
@@ -29,7 +24,7 @@ const fundoArenaImg = new Image();
 fundoArenaImg.src = "assets/img/fundo_arena.png";
 
 const fogueiraFundoImg = new Image();
-fogueiraFundoImg.src = "assets/img/fogueira_fundo.png"; // Imagem completa do fundo da fogueira
+fogueiraFundoImg.src = "assets/img/fogueira_fundo.png";
 
 let teclasPressionadas = {
     ArrowLeft: false,
@@ -45,9 +40,12 @@ function limparTeclas() {
     teclasPressionadas.ArrowDown = false;
 }
 
+/* =========================================
+   SISTEMA DE MODAIS E INTERFACE
+========================================= */
+
 function mostrarModal(texto, callbackOk = null, textoOk = "OK", callbackCancelar = null, textoCancelar = "Cancelar") {
     document.getElementById("modal-box").classList.remove("modo-bestiario");
-
     document.getElementById("modal-texto").innerText = texto;
     let botoesContainer = document.getElementById("modal-botoes-container");
     botoesContainer.innerHTML = "";
@@ -89,11 +87,14 @@ function definirBotoes(html) {
     document.getElementById("menu-acoes").innerHTML = html;
 }
 
+/* =========================================
+   EXPLORAÇÃO E AÇÕES
+========================================= */
+
 function explorar() {
     animalAtual = inimigos[Math.floor(Math.random() * inimigos.length)];
     document.getElementById("narrativa-texto").innerText = `⚠️ Um(a) ${animalAtual.nome} selvagem surgiu das sombras!`;
 
-    // Exibe o painel com a imagem e o nome do monstro encontrado
     document.getElementById("monstro-info").style.display = "block";
     document.getElementById("monstro-arena").src = animalAtual.imgSrc;
     document.getElementById("titulo-arena").innerText = `⚔️ ${animalAtual.nome.toUpperCase()} ⚔️`;
@@ -131,25 +132,19 @@ function fugir() {
     const chanceFuga = Math.random();
 
     if (chanceFuga < 0.35) {
-        mostrarModal(
-            "🏃 Vossa Majestade usou a agilidade e conseguiu fugir das sombras!",
-            () => {
-                restaurarMenuPrincipal();
-            }
-        );
+        mostrarModal("🏃 Vossa Majestade usou a agilidade e conseguiu fugir das sombras!", () => {
+            restaurarMenuPrincipal();
+        });
     } else {
-        mostrarModal(
-            `❌ A fuga falhou! O(a) ${animalAtual.nome} cercou Vossa Majestade e atacou!`,
-            () => {
-                iniciarArena();
-            }
-        );
+        mostrarModal(`❌ A fuga falhou! O(a) ${animalAtual.nome} cercou Vossa Majestade e atacou!`, () => {
+            iniciarArena();
+        });
     }
 }
 
 function restaurarMenuPrincipal() {
     limparTeclas();
-    window.onkeydown = null; // Libera os eventos globais de tecla
+    window.onkeydown = null;
     window.onkeyup = null;
     pararAnimacaoFogueira();
 
@@ -173,354 +168,7 @@ function restaurarMenuPrincipal() {
 }
 
 /* =========================================
-   LÓGICA DA FOGUEIRA
-========================================= */
-
-let fogueiraAnimId = null;
-let faiscas = [];
-
-function criarFaisca(canvasWidth, canvasHeight) {
-    // Ajuste fino: X em 0.15 para o alinhamento perfeito
-    const origX = canvasWidth * 0.15;
-    const origY = canvasHeight * 0.72;
-
-    return {
-        x: origX + (Math.random() * 12 - 6),
-        y: origY,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: -Math.random() * 2.0 - 0.8,
-        tamanho: Math.random() * 2 + 1,
-        vida: 1.0,
-        cor: Math.random() > 0.3 ? "#ff4500" : "#ffcc00"
-    };
-}
-
-function fogueira() {
-    vida = vidaMax;
-    macas = macasMax;
-    atualizarStatus();
-
-    document.getElementById("container").classList.add("em-fogueira");
-    document.getElementById("menu-acoes").style.display = "none";
-    document.getElementById("monstro-info").style.display = "none";
-    document.getElementById("arena-box").style.display = "none";
-
-    document.getElementById("fogueira-arte-container").style.display = "flex";
-    document.getElementById("fogueira-box").style.display = "flex";
-    document.getElementById("narrativa-texto").innerText = "As chamas acalmam vossa alma. Vida e maçãs foram restauradas.";
-
-    iniciarDesenhoFogueira();
-    atualizarPainelFogueira();
-}
-
-function atualizarPainelFogueira() {
-    const infoContainer = document.getElementById("fogueira-status-detalhes");
-    const botoesContainer = document.getElementById("fogueira-botoes");
-
-    infoContainer.innerHTML = `
-        ✨ <b>Nível Atual:</b> ${nivel}<br>
-        👻 <b>Almas Disponíveis:</b> ${almas}<br>
-        🔮 <b>Custo Próximo Nível:</b> ${almasNecessarias} Almas<br><hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
-        ❤️ <b>Vitalidade:</b> ${vidaMax} HP (+5/nível)<br>
-        ⚔️ <b>Dano Base:</b> ${danoAtaque} (+3/nível)<br>
-        💨 <b>Agilidade:</b> Nv. ${agilidade} (Desaceleração de projéteis)
-    `;
-
-    botoesContainer.innerHTML = `
-        <button class="btn" onclick="uparAtributo('vitalidade')" style="background-color: #8b0000;">❤️ Upar Vitalidade (+5 HP)</button>
-        <button class="btn" onclick="uparAtributo('dano')" style="background-color: #a0522d;">⚔️ Upar Dano (+3 Dano)</button>
-        <button class="btn" onclick="uparAtributo('agilidade')" style="background-color: #2e8b57;">💨 Upar Agilidade (Projéteis Lentos)</button>
-        <button class="btn" onclick="restaurarMenuPrincipal()" style="background-color: #444; margin-top: 10px;">🚪 Levantar-se e Sair</button>
-    `;
-}
-
-function uparAtributo(tipo) {
-    if (almas >= almasNecessarias) {
-        almas -= almasNecessarias;
-        nivel++;
-        almasNecessarias = Math.floor(almasNecessarias * 1.5);
-
-        let mensagem = "";
-        if (tipo === 'vitalidade') {
-            vidaMax += 5;
-            vida = vidaMax;
-            mensagem = "❤️ Vossa Vitalidade aumentou! (+5 HP Max)";
-        } else if (tipo === 'dano') {
-            danoAtaque += 3;
-            mensagem = "⚔️ Seu Dano de ataque aumentou! (+3 Dano)";
-        } else if (tipo === 'agilidade') {
-            agilidade += 1;
-            mensagem = "💨 Vossa Agilidade aumentou! Ataques inimigos ficarão mais lentos.";
-        }
-
-        atualizarStatus();
-        mostrarModal(`✨ ${mensagem}`, () => {
-            atualizarPainelFogueira();
-        });
-    } else {
-        mostrarModal("❌ Almas insuficientes para este sacrifício.");
-    }
-}
-
-function iniciarDesenhoFogueira() {
-    const canvas = document.getElementById("canvasFogueira");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    faiscas = [];
-
-    function render() {
-        ctx.imageSmoothingEnabled = false;
-
-        // Desenha a Imagem Completa do Cenário
-        if (fogueiraFundoImg.complete && fogueiraFundoImg.naturalWidth !== 0) {
-            ctx.drawImage(fogueiraFundoImg, 0, 0, canvas.width, canvas.height);
-        } else {
-            ctx.fillStyle = "#090d16";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Gerencia as Faíscas
-        if (faiscas.length < 30) {
-            faiscas.push(criarFaisca(canvas.width, canvas.height));
-        }
-
-        for (let i = faiscas.length - 1; i >= 0; i--) {
-            let p = faiscas[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vida -= 0.02;
-
-            ctx.fillStyle = p.cor;
-            ctx.globalAlpha = Math.max(0, p.vida);
-            ctx.fillRect(p.x, p.y, p.tamanho, p.tamanho);
-
-            if (p.vida <= 0 || p.y < canvas.height * 0.3) {
-                faiscas.splice(i, 1);
-            }
-        }
-
-        ctx.globalAlpha = 1.0;
-
-        fogueiraAnimId = requestAnimationFrame(render);
-    }
-
-    if (fogueiraAnimId) cancelAnimationFrame(fogueiraAnimId);
-    render();
-}
-
-function pararAnimacaoFogueira() {
-    if (fogueiraAnimId) {
-        cancelAnimationFrame(fogueiraAnimId);
-        fogueiraAnimId = null;
-    }
-}
-
-/* =========================================
-   COMBATE NA ARENA
-========================================= */
-
-let canvas, ctx;
-
-// TAMANHO DO PERSONAGEM E HITBOX PROPORCIONAL
-const tamanhoPers = 70;
-const hitboxPers = 30;
-
-let coracaoX = 500, coracaoY = 310;
-let obstaculos = [];
-let tempoRestante = 5.0;
-let intervaloArena = null;
-
-function iniciarArena() {
-    limparTeclas();
-
-    document.getElementById("container").classList.add("em-combate");
-
-    document.getElementById("menu-acoes").style.display = "none";
-    document.getElementById("monstro-info").style.display = "block";
-    document.getElementById("fogueira-arte-container").style.display = "none";
-    document.getElementById("fogueira-box").style.display = "none";
-    document.getElementById("arena-box").style.display = "flex";
-    document.getElementById("arena-start").style.display = "flex";
-
-    document.getElementById("monstro-arena").src = animalAtual.imgSrc;
-    document.getElementById("titulo-arena").innerText = `⚔️ ${animalAtual.nome.toUpperCase()} ⚔️`;
-    document.getElementById("narrativa-texto").innerText = `Resista ao poder de ${animalAtual.nome}!`;
-
-    canvas = document.getElementById("canvasArena");
-
-    // Dimensões lógicas do Canvas (não alterar)
-    canvas.width = 1000;
-    canvas.height = 620;
-
-    ctx = canvas.getContext("2d");
-
-    // Posição inicial no centro do Canvas
-    coracaoX = canvas.width / 2;
-    coracaoY = canvas.height / 2 + 80;
-    tempoRestante = animalAtual.tempoLuta;
-
-    let velCalculada = Math.max(2.0, animalAtual.velocidade - (agilidade * 0.5));
-
-    obstaculos = [];
-    for (let i = 0; i < animalAtual.quantidade; i++) {
-        obstaculos.push({
-            x: Math.random() * (canvas.width - 60) + 30,
-            y: -(i * 120),
-            velocidade: velCalculada
-        });
-    }
-
-    // Gerenciador de teclas limpo
-    window.onkeydown = (e) => {
-        if (e.key === "Enter" && !intervaloArena) {
-            document.getElementById("arena-start").style.display = "none";
-            intervaloArena = setInterval(loopArena, 30);
-            return;
-        }
-
-        if (teclasPressionadas.hasOwnProperty(e.key)) {
-            e.preventDefault();
-            teclasPressionadas[e.key] = true;
-        }
-    };
-
-    window.onkeyup = (e) => {
-        if (teclasPressionadas.hasOwnProperty(e.key)) {
-            e.preventDefault();
-            teclasPressionadas[e.key] = false;
-        }
-    };
-
-    if (intervaloArena) clearInterval(intervaloArena);
-    intervaloArena = null;
-}
-
-const ataquesImagens = {};
-
-function carregarImagemAtaque(src) {
-    if (!ataquesImagens[src]) {
-        const img = new Image();
-        img.src = src;
-        ataquesImagens[src] = img;
-    }
-
-    return ataquesImagens[src];
-}
-
-function loopArena() {
-    if (teclasPressionadas.ArrowLeft) coracaoX = Math.max(24, coracaoX - 7);
-    if (teclasPressionadas.ArrowRight) coracaoX = Math.min(976, coracaoX + 7);
-    if (teclasPressionadas.ArrowUp) coracaoY = Math.max(24, coracaoY - 7);
-    if (teclasPressionadas.ArrowDown) coracaoY = Math.min(596, coracaoY + 7);
-
-    if (fundoArenaImg.complete && fundoArenaImg.naturalWidth !== 0) {
-        ctx.drawImage(fundoArenaImg, 0, 0, canvas.width, canvas.height);
-    } else {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    // DESENHA O PERSONAGEM
-    if (heroiImg.complete && heroiImg.naturalWidth !== 0) {
-        ctx.drawImage(
-            heroiImg,
-            coracaoX - tamanhoPers / 2,
-            coracaoY - tamanhoPers / 2,
-            tamanhoPers,
-            tamanhoPers
-        );
-    } else {
-        ctx.font = "24px Arial";
-        ctx.fillStyle = "red";
-        ctx.fillText("❤️", coracaoX - 12, coracaoY + 8);
-    }
-
-    const imgAtaque = carregarImagemAtaque(animalAtual.ataqueImgSrc);
-    const tamanhoAtaque = 34;
-
-    for (let obs of obstaculos) {
-        obs.y += obs.velocidade;
-
-        if (obs.y > 620) {
-            obs.y = -30;
-            obs.x = Math.random() * 940 + 30;
-        }
-
-        if (imgAtaque.complete && imgAtaque.naturalWidth !== 0) {
-            ctx.drawImage(
-                imgAtaque,
-                obs.x - tamanhoAtaque / 2,
-                obs.y - tamanhoAtaque / 2,
-                tamanhoAtaque,
-                tamanhoAtaque
-            );
-        } else {
-            ctx.font = "22px Arial";
-            ctx.fillStyle = "white";
-            ctx.fillText(animalAtual.simboloAtaque, obs.x - 12, obs.y + 8);
-        }
-
-        // HITBOX PROPORCIONAL AO PERSONAGEM
-        const dx = coracaoX - obs.x;
-        const dy = coracaoY - obs.y;
-        const distancia = Math.sqrt(dx * dx + dy * dy);
-
-        if (distancia < hitboxPers) {
-            clearInterval(intervaloArena);
-            limparTeclas();
-            window.onkeydown = null;
-            window.onkeyup = null;
-
-            vida -= animalAtual.dano;
-
-            mostrarModal(
-                `💥 Vossa Majestade foi atingida por ${animalAtual.nome}! Perdeu ${animalAtual.dano} de HP.`,
-                () => {
-                    verificarMorte();
-                }
-            );
-
-            return;
-        }
-    }
-
-    tempoRestante -= 0.03;
-    document.getElementById("tempo-restante").innerText =
-        `Tempo de Sobrevivência: ${tempoRestante.toFixed(1)}s`;
-
-    if (tempoRestante <= 0) {
-        clearInterval(intervaloArena);
-        limparTeclas();
-        window.onkeydown = null;
-        window.onkeyup = null;
-
-        mostrarModal(
-            `✨ Vossa Majestade superou a fúria de ${animalAtual.nome}!`,
-            () => {
-                restaurarMenuPrincipal();
-            }
-        );
-    }
-}
-
-function verificarMorte() {
-    if (vida <= 0) {
-        mostrarModal(
-            "💀 YOU DIED 💀\nA escuridão consumiu o reino. Todas as almas foram perdidas.",
-            () => {
-                almas = 0;
-                vida = vidaMax;
-                macas = macasMax;
-                restaurarMenuPrincipal();
-            }
-        );
-    } else {
-        restaurarMenuPrincipal();
-    }
-}
-
-/* =========================================
-   GLOSSÁRIO / BESTIÁRIO NO MODAL
+   BESTIÁRIO E INVENTÁRIO
 ========================================= */
 
 function mostrarInventario() {
@@ -562,9 +210,7 @@ function mostrarInventario() {
         </div>
     `;
 
-    botoesContainer.innerHTML =
-        `<button class="modal-btn" onclick="fecharModal()">OK</button>`;
-
+    botoesContainer.innerHTML = `<button class="modal-btn" onclick="fecharModal()">OK</button>`;
     document.getElementById("modal-overlay").style.display = "flex";
 }
 
