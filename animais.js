@@ -1,8 +1,10 @@
 const inimigos = [
 
+
     // =========================================
     // NÍVEL 1 — AMEAÇAS COMUNS
     // =========================================
+
 
     {
         nome: "Pombo da Podridão",
@@ -17,6 +19,7 @@ const inimigos = [
         simboloAtaque: "🐾"
     },
 
+
     {
         nome: "Capivara do Abismo",
         chance: 0.5,
@@ -29,6 +32,7 @@ const inimigos = [
         ataqueImgSrc: "assets/img/ataques/ataque_capivara.png",
         simboloAtaque: "🐾"
     },
+
 
     {
         nome: "Cervo Espectral",
@@ -43,9 +47,13 @@ const inimigos = [
         simboloAtaque: "👻"
     },
 
+
+
+
     // =========================================
     // NÍVEL 2 — AMEAÇAS PERIGOSAS
     // =========================================
+
 
     {
         nome: "Lobo das Cinzas",
@@ -60,6 +68,7 @@ const inimigos = [
         simboloAtaque: "⚡"
     },
 
+
     {
         nome: "Praga Encarnada",
         chance: 0.35,
@@ -72,6 +81,7 @@ const inimigos = [
         ataqueImgSrc: "assets/img/ataques/ataque_praga.png",
         simboloAtaque: "☠️"
     },
+
 
     {
         nome: "Lagosta Infernal",
@@ -86,6 +96,7 @@ const inimigos = [
         simboloAtaque: "🔥"
     },
 
+
     {
         nome: "Viúva Sombria",
         chance: 0.3,
@@ -98,23 +109,14 @@ const inimigos = [
         ataqueImgSrc: "assets/img/ataques/ataque_viuva.png",
         simboloAtaque: "🕷️"
     },
-    
-    {
-        nome: "Pantera das Sombras",
-        chance: 0.25,
-        dano: 12,
-        almas: 35,
-        velocidade: 8,
-        quantidade: 4,
-        tempoLuta: 9.5,
-        imgSrc: "assets/img/animais/pantera.png",
-        ataqueImgSrc: "assets/img/ataques/ataque_pantera.png",
-        simboloAtaque: "🐾"
-    },
+
+
+
 
     // =========================================
     // NÍVEL 3 — AMEAÇAS ELITE
     // =========================================
+
 
     {
         nome: "Morcego do Vazio",
@@ -129,6 +131,7 @@ const inimigos = [
         simboloAtaque: "🌑"
     },
 
+
     {
         nome: "Escorpião do Caos",
         chance: 0.2,
@@ -141,6 +144,7 @@ const inimigos = [
         ataqueImgSrc: "assets/img/ataques/ataque_escorpiao.png",
         simboloAtaque: "☠️"
     },
+
 
     {
         nome: "Urso Pardo Corrompido",
@@ -155,6 +159,7 @@ const inimigos = [
         simboloAtaque: "💥"
     },
 
+
     {
         nome: "Serpente do Eclipse",
         chance: 0.15,
@@ -167,24 +172,14 @@ const inimigos = [
         ataqueImgSrc: "assets/img/ataques/ataque_serpente.png",
         simboloAtaque: "🌑"
     },
-    
-    {
-        nome: "Bisão Gélido",
-        chance: 0.12,
-        dano: 19,
-        almas: 70,
-        velocidade: 8.5,
-        vazio: true, 
-        quantidade: 5,
-        tempoLuta: 12.5,
-        imgSrc: "assets/img/animais/bisao.png",
-        ataqueImgSrc: "assets/img/ataques/ataque_bisao.png",
-        simboloAtaque: "❄️"
-    },
+
+
+
 
     // =========================================
     // NÍVEL 4 — AMEAÇAS LENDÁRIAS
     // =========================================
+
 
     {
         nome: "Crocodilo Profano",
@@ -199,6 +194,7 @@ const inimigos = [
         simboloAtaque: "💀"
     },
 
+
     {
         nome: "Polvo do Abismo",
         chance: 0.08,
@@ -211,4 +207,6 @@ const inimigos = [
         ataqueImgSrc: "assets/img/ataques/ataque_polvo.png",
         simboloAtaque: "🌀"
     }
+
+
 ];

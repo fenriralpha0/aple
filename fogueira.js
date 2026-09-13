@@ -79,7 +79,9 @@ function uparAtributo(tipo) {
         }
 
         atualizarStatus();
-        mostrarModal(`✨ ${mensagem}`, () => atualizarPainelFogueira());
+        mostrarModal(`✨ ${mensagem}`, () => {
+            atualizarPainelFogueira();
+        });
     } else {
         mostrarModal("❌ Almas insuficientes para este sacrifício.");
     }
@@ -89,6 +91,7 @@ function iniciarDesenhoFogueira() {
     const canvas = document.getElementById("canvasFogueira");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+
     faiscas = [];
 
     function render() {
@@ -101,7 +104,9 @@ function iniciarDesenhoFogueira() {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        if (faiscas.length < 30) faiscas.push(criarFaisca(canvas.width, canvas.height));
+        if (faiscas.length < 30) {
+            faiscas.push(criarFaisca(canvas.width, canvas.height));
+        }
 
         for (let i = faiscas.length - 1; i >= 0; i--) {
             let p = faiscas[i];
@@ -113,8 +118,11 @@ function iniciarDesenhoFogueira() {
             ctx.globalAlpha = Math.max(0, p.vida);
             ctx.fillRect(p.x, p.y, p.tamanho, p.tamanho);
 
-            if (p.vida <= 0 || p.y < canvas.height * 0.3) faiscas.splice(i, 1);
+            if (p.vida <= 0 || p.y < canvas.height * 0.3) {
+                faiscas.splice(i, 1);
+            }
         }
+
         ctx.globalAlpha = 1.0;
         fogueiraAnimId = requestAnimationFrame(render);
     }
