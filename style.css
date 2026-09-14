@@ -351,17 +351,20 @@ canvas#canvasArena {
 
 #modal-overlay {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
     background-color: rgba(0, 0, 0, 0.88);
     backdrop-filter: blur(4px);
+
     z-index: 999;
+
     justify-content: center;
     align-items: center;
-}
+}   
 
 #modal-box {
     background: #0f141a;
@@ -422,51 +425,6 @@ canvas#canvasArena {
 }
 
 /* =========================================
-   MODAL EXPANDIDO (Glossário / Bestiário)
-========================================= */
-
-#modal-box.modo-bestiario {
-    width: 90vw;
-    max-width: 1000px;
-    height: 80vh;
-    max-height: 700px;
-    flex-direction: row;
-    padding: 0;
-    overflow: hidden;
-}
-
-#bestiario-lista {
-    width: 32%;
-    min-width: 220px;
-    border-right: 2px dashed rgba(122, 139, 153, 0.4);
-    padding: 20px;
-    overflow-y: auto;
-    background: rgba(10, 14, 18, 0.9);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-#bestiario-detalhes {
-    width: 68%;
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow-y: auto;
-    background: rgba(15, 20, 26, 0.95);
-    position: relative;
-}
-
-#modal-box.modo-bestiario .modal-botoes {
-    position: absolute;
-    bottom: 15px;
-    right: 20px;
-    width: auto;
-}
-
-/* =========================================
    ANIMAÇÕES
 ========================================= */
 
@@ -480,4 +438,670 @@ canvas#canvasArena {
     100% {
         box-shadow: 0 0 15px rgba(122, 139, 153, 0.3);
     }
+}
+
+/* =========================================
+   CONTAINER PRINCIPAL
+========================================= */
+
+#bestiario-container {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+
+/* =========================================
+   CABEÇALHO
+========================================= */
+
+#bestiario-cabecalho {
+    width: 100%;
+
+    padding: 22px 28px 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 2px dashed rgba(122, 139, 153, 0.45);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(30, 38, 46, 0.95),
+            rgba(10, 14, 18, 0.95)
+        );
+
+    flex-shrink: 0;
+}
+
+
+#bestiario-cabecalho h2 {
+    margin: 0;
+
+    color: #ff3333;
+
+    font-size: 14px;
+
+    text-shadow:
+        2px 2px 0 #000,
+        0 0 12px rgba(255, 51, 51, 0.45);
+}
+
+
+#bestiario-cabecalho p {
+    margin: 9px 0 0;
+
+    color: #aaa;
+
+    font-size: 8px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   CONTADOR
+========================================= */
+
+#bestiario-contador {
+    padding: 10px 14px;
+
+    border: 2px solid #7a8b99;
+
+    border-radius: 6px;
+
+    background: #090c10;
+
+    color: #ffcc00;
+
+    font-size: 8px;
+
+    white-space: nowrap;
+
+    box-shadow:
+        inset 0 0 10px #000,
+        0 0 8px rgba(122, 139, 153, 0.25);
+}
+
+
+/* =========================================
+   GRADE DAS FERAS
+========================================= */
+
+#bestiario-grid {
+    width: 100%;
+    flex: 1;
+
+    padding: 25px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(170px, 1fr));
+
+    grid-auto-rows: minmax(210px, auto);
+
+    gap: 18px;
+
+    overflow-y: auto;
+
+    align-content: start;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(40, 48, 58, 0.45),
+            rgba(5, 8, 11, 0.98)
+        );
+}
+
+
+/* =========================================
+   CARD DA FERA
+========================================= */
+
+.fera-card {
+    min-height: 210px;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(25, 31, 38, 0.98),
+            rgba(8, 11, 15, 0.98)
+        );
+
+    border: 2px solid #5a6a78;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 5px 0 #000,
+        inset 0 0 18px rgba(0, 0, 0, 0.8);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.fera-card:hover {
+    transform: translateY(-5px);
+
+    border-color: #ff3333;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(55, 24, 28, 0.98),
+            rgba(12, 10, 14, 0.98)
+        );
+
+    box-shadow:
+        0 8px 0 #000,
+        0 0 22px rgba(255, 51, 51, 0.35),
+        inset 0 0 18px rgba(0, 0, 0, 0.8);
+}
+
+
+.fera-card:active {
+    transform: translateY(1px);
+
+    box-shadow:
+        0 2px 0 #000,
+        0 0 15px rgba(255, 51, 51, 0.3);
+}
+
+
+/* =========================================
+   IMAGEM DA FERA
+========================================= */
+
+.fera-card-imagem {
+    width: 125px;
+    height: 125px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 10px;
+}
+
+
+.fera-card-imagem img {
+    width: 120px !important;
+    height: 120px !important;
+
+    max-width: 120px !important;
+    max-height: 120px !important;
+
+    object-fit: contain !important;
+
+    margin: 0 !important;
+
+    image-rendering: pixelated;
+
+    filter:
+        drop-shadow(0 0 7px rgba(143, 163, 179, 0.45));
+}
+
+
+/* =========================================
+   NOME
+========================================= */
+
+.fera-card-nome {
+    width: 100%;
+
+    color: #ffffff;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+
+    font-weight: bold;
+
+    text-shadow: 1px 1px 0 #000;
+}
+
+
+/* =========================================
+   QUANTIDADE
+========================================= */
+
+.fera-card-qtd {
+    margin-top: 8px;
+
+    color: #ffcc00;
+
+    font-size: 7px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   MINI MODAL
+========================================= */
+
+#fera-detalhes-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 50;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    background: rgba(0, 0, 0, 0.78);
+
+    backdrop-filter: blur(5px);
+}
+
+/* =========================================
+   BOTÃO FECHAR
+========================================= */
+
+#fera-detalhes-fechar {
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+
+    border: 2px solid #7a8b99;
+
+    border-radius: 5px;
+
+    background: #090c10;
+
+    color: #ffffff;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+#fera-detalhes-fechar:hover {
+    background: #ff3333;
+
+    border-color: #ffffff;
+
+    transform: scale(1.05);
+}
+
+
+/* =========================================
+   IMAGEM NO MINI MODAL
+========================================= */
+
+.fera-detalhes-imagem {
+    width: 190px;
+    height: 190px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 12px;
+}
+
+
+.fera-detalhes-imagem img {
+    width: 180px !important;
+    height: 180px !important;
+
+    max-width: 180px !important;
+    max-height: 180px !important;
+
+    object-fit: contain !important;
+
+    margin: 0 !important;
+
+    image-rendering: pixelated;
+
+    filter:
+    drop-shadow(0 0 10px rgba(143, 163, 179, 0.6))
+    drop-shadow(0 0 22px rgba(122, 139, 153, 0.35));
+}
+
+
+/* =========================================
+   NOME NO MINI MODAL
+========================================= */
+
+#fera-detalhes-modal h2 {
+    margin: 5px 35px 8px;
+
+    color: #ff3333;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    text-shadow:
+        2px 2px 0 #000,
+        0 0 10px rgba(255, 51, 51, 0.4);
+}
+
+
+/* =========================================
+   QUANTIDADE NO MINI MODAL
+========================================= */
+
+.fera-detalhes-qtd {
+    margin-bottom: 18px;
+
+    color: #ffcc00;
+
+    font-size: 8px;
+}
+
+
+/* =========================================
+   INFORMAÇÕES
+========================================= */
+
+.fera-detalhes-info {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 22px;
+}
+
+
+.fera-info-item {
+    padding: 12px 8px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    align-items: center;
+
+    background: #090c10;
+
+    border: 1px solid #5a6a78;
+
+    border-radius: 6px;
+}
+
+
+.fera-info-item span {
+    color: #aaa;
+
+    font-size: 7px;
+}
+
+
+.fera-info-item strong {
+    color: #ffffff;
+
+    font-size: 10px;
+}
+
+/* Conteúdo */
+
+#modal-box.modo-bestiario #modal-texto {
+    width: 100%;
+    flex: 1;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* Bestiário */
+
+#modal-box.modo-bestiario #bestiario-container {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* Cabeçalho */
+
+#modal-box.modo-bestiario #bestiario-cabecalho {
+    width: 100%;
+
+    min-height: 100px;
+
+    padding: 20px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+
+    flex-shrink: 0;
+}
+
+
+/* Área das feras */
+
+#modal-box.modo-bestiario #bestiario-grid {
+    width: 100%;
+
+    flex: 1;
+
+    padding: 20px 30px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(170px, 1fr));
+
+    gap: 18px;
+
+    overflow-y: auto;
+
+    align-content: start;
+
+    box-sizing: border-box;
+}
+
+
+/* Botão voltar */
+
+#modal-box.modo-bestiario .modal-botoes {
+    width: 100%;
+
+    min-height: 65px;
+
+    margin: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    box-sizing: border-box;
+}
+
+/* =========================================
+   MINI MODAL DA FERA — MAIOR
+========================================= */
+
+#fera-detalhes-modal {
+    width: min(560px, 80%);
+    max-width: 560px;
+
+    min-height: 600px;
+    max-height: 90%;
+
+    padding: 35px;
+
+    box-sizing: border-box;
+}
+
+
+/* Imagem maior */
+
+.fera-detalhes-imagem {
+    width: 240px;
+    height: 240px;
+
+    margin-bottom: 15px;
+}
+
+
+.fera-detalhes-imagem img {
+    width: 225px !important;
+    height: 225px !important;
+
+    max-width: 225px !important;
+    max-height: 225px !important;
+}
+
+
+/* Nome maior */
+
+#fera-detalhes-modal h2 {
+    font-size: 15px;
+
+    margin: 8px 35px 12px;
+}
+
+
+/* Quantidade */
+
+.fera-detalhes-qtd {
+    font-size: 9px;
+    margin-bottom: 25px;
+}
+
+
+/* Informações maiores */
+
+.fera-detalhes-info {
+    width: 100%;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 14px;
+
+    margin-bottom: 28px;
+}
+
+
+.fera-info-item {
+    min-height: 75px;
+
+    padding: 14px 10px;
+
+    justify-content: center;
+}
+
+
+.fera-info-item span {
+    font-size: 8px;
+}
+
+
+.fera-info-item strong {
+    font-size: 12px;
+}
+
+/* =========================================
+   BESTIÁRIO — DENTRO DA JANELA DO JOGO
+========================================= */
+
+#modal-box.modo-bestiario {
+    width: 800px;
+    max-width: 92%;
+    height: 80vh;
+    max-height: 700px;
+
+    margin: 0;
+    padding: 0;
+
+    background: #0f141a;
+    border: 3px solid #7a8b99;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#fera-detalhes-modal .fera-detalhes-imagem {
+    width: 100%;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+}
+
+#fera-detalhes-modal .fera-detalhes-imagem img {
+    display: block !important;
+    width: 225px !important;
+    height: 225px !important;
+    max-width: 225px !important;
+    max-height: 225px !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
 }
