@@ -44,7 +44,7 @@ body {
     background: rgba(15, 20, 26, 0.95);
     border: 3px solid #7a8b99;
     border-radius: 12px;
-    padding: 25px;
+    padding: 15px 20px;
 
     box-shadow:
         0 0 30px rgba(122, 139, 153, 0.25),
@@ -154,8 +154,8 @@ h1 {
 .narrativa {
     width: 100%;
 
-    margin: 10px 0;
-    padding: 12px;
+    margin: 6px 0;
+    padding: 8px 10px;
 
     color: #ffffff;
     font-size: 10px;
@@ -189,7 +189,7 @@ h1 {
 .monstro-img,
 #monstro-arena {
     max-width: 260px !important;
-    max-height: 260px !important;
+    max-height: min(210px, 23vh) !important;
 
     width: auto !important;
     height: auto !important;
@@ -245,8 +245,8 @@ h1 {
     border: 2px solid #5a6a78;
     border-radius: 6px;
 
-    padding: 14px;
-    margin: 6px 0;
+    padding: 10px 12px;
+    margin: 4px 0;
 
     font-family: 'Press Start 2P', monospace;
     font-size: 11px;
